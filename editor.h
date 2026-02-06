@@ -19,19 +19,36 @@ char readKeyBlocking() {
   return c;
 }
 
+void controlKeyDebugPrint(State *state, char c) {
+  printf("\x1b[999;1H"); // move cursor to bottommost line
+  printf("Last control key: %d", c);
+}
+
 void processKey(State *state, char c) {
   if (c == '\x1b' || c == CTRL_KEY('q')) {
     state->running = 0;
   }
+  else if (c == '\n') {
+    sbAppendChar(state->sb, '\n');
+    state->cursorY++;
+    state->cursorX = 0;
+  }
   else if (isprint(c)) {
     sbAppendChar(state->sb, c);
+    state->cursorX++;
+  }
+  else if (iscntrl(c)) {
+    controlKeyDebugPrint(state, c);
   }
 }
 
+
 void refreshScreen(State *state) {
-  printf("\x1b[2J"); // clear screen
+  // printf("\x1b[2J"); // clear screen
   printf("\x1b[H");  // move cursor to top left
-  printf("%s", state->sb->s); // print buffer
+
+  StringBuffer *editorBuffer = state->sb;
+  fwrite(editorBuffer->s, sizeof(char), editorBuffer->len, stdout);
   printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
 }
 
