@@ -11,11 +11,6 @@ typedef enum mode {
 } EMode;
 
 typedef struct {
-  int height;
-  int width;
-} WinDims;
-
-typedef struct {
   int running;
   EMode mode;
 
@@ -23,10 +18,11 @@ typedef struct {
 
   StringBuffer *sb;
 
-  int line;
-  int col;
+  int cursorY;
+  int cursorX;
 
-  WinDims winDims;
+  int windowHeight;
+  int windowWidth;
 
 } State;
 

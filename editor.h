@@ -32,7 +32,7 @@ void refreshScreen(State *state) {
   printf("\x1b[2J"); // clear screen
   printf("\x1b[H");  // move cursor to top left
   printf("%s", state->sb->s); // print buffer
-  printf("\x1b[%d;%dH", state->line + 1, state->col + 1); // move cursor to buffer position
+  printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
 }
 
 #endif // UTIL_H
