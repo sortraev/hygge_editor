@@ -20,7 +20,7 @@ StringBuffer *sbWithCapacity(size_t initCap) {
   }
 
   initCap = initCap < 1 ? 1 : initCap;
-  sb->s = malloc(initCap * sizeof(char));
+  sb->s = calloc(initCap, sizeof(char));
   if (!sb->s) {
     free(sb);
     return NULL;
@@ -28,7 +28,6 @@ StringBuffer *sbWithCapacity(size_t initCap) {
 
   sb->cap = initCap;
   sb->len = 0;
-  sb->s[0] = '\0';
 
   return sb;
 }
@@ -77,7 +76,9 @@ int sbAppendChar(StringBuffer *sb, char c) {
 }
 
 void sbFree(StringBuffer *sb) {
-  free(sb->s);
+  if (sb) {
+    free(sb->s);
+  }
 }
 
 int sbTest() {

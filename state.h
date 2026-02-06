@@ -42,6 +42,7 @@ State *stateInit() {
 void stateFree(State *state) {
   if (state) {
     sbFree(state->sb);
+    free(state->sb);
   }
 }
 
