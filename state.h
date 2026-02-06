@@ -14,7 +14,7 @@ typedef struct {
   int running;
   EMode mode;
 
-  FILE *f;
+  FILE *outFile;
 
   StringBuffer *sb;
 
@@ -41,7 +41,7 @@ State *stateInit() {
 
 void stateFree(State *state) {
   if (state) {
-    free(state->sb);
+    sbFree(state->sb);
   }
 }
 
