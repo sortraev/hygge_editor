@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
 
   printf("read: \"%s\"\n", state->sb->s);
   stateFree(state);
+  free(state);
   fclose(f);
 
   return 0;
