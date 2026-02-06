@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "string_buf.h"
+#include "string_buffer.h"
 
 typedef enum mode {
   NORMAL,

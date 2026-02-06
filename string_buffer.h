@@ -1,5 +1,5 @@
-#ifndef STRING_BUF_H
-#define STRING_BUF_H
+#ifndef STRING_BUFFER_H
+#define STRING_BUFFER_H
 
 #include "string.h"
 
@@ -110,4 +110,4 @@ int sbTest() {
   return 0;
 }
 
-#endif // STRING_BUF_H
+#endif // STRING_BUFFER_H
