@@ -34,11 +34,18 @@ StringBuffer *sbWithCapacity(size_t initCap) {
 
 int sbResize(StringBuffer *sb, size_t newMaxLen) {
   size_t newCap = newMaxLen + 1;
+
+  if (newCap <= 0) {
+    fprintf(stderr, "sbResize() error: invalid newMaxLen: %ld\n", newMaxLen);
+    exit(1);
+  }
+
   char *tmp = realloc(sb->s, newCap * sizeof(char));
   if (!tmp) {
     fprintf(stderr, "StringBuffer resize(): Failed to reallocate\n");
     return 1;
   }
+
   sb->s = tmp;
   sb->cap = newCap;
 
