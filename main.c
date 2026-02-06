@@ -30,14 +30,13 @@ int main(int argc, char **argv) {
   state->running = 1;
 
   while (state->running) {
-    // refreshScreen(state);
+    refreshScreen(state);
     char c = readKeyBlocking();
     processKey(state, c);
   }
 
   reset_terminal_mode();
 
-  printf("read: \"%s\"\n", state->sb->s);
   stateFree(state);
   free(state);
   fclose(f);
