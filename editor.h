@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef EDITOR_H
+#define EDITOR_H
 
 #include <stdio.h>
 
@@ -52,4 +52,4 @@ void refreshScreen(State *state) {
   printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
 }
 
-#endif // UTIL_H
+#endif // EDITOR_H
