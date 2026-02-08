@@ -1,5 +1,5 @@
 main=my_editor
-src=main.c init.h state.h
+src=main.c editor.h init.h state.h string_buffer.h
 
 .PHONY: $(src)
 
