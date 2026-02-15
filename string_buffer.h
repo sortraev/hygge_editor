@@ -61,7 +61,6 @@ int sbShrink(StringBuffer *sb) {
 }
 
 int sbAppendString(StringBuffer *sb, char *s) {
-
   size_t newLen = sb->len + strlen(s);
   if (newLen + 1 > sb->cap) {
     sbResize(sb, newLen);
@@ -86,36 +85,6 @@ void sbFree(StringBuffer *sb) {
   if (sb) {
     free(sb->s);
   }
-}
-
-int sbTest() {
-
-  StringBuffer *sb = sbWithCapacity(0);
-
-  printf("%s\n", sb->s);
-
-  sbAppendString(sb, "Hej");
-  sbAppendString(sb, " ");
-  sbAppendString(sb, "Anders");
-  sbAppendString(sb, "Anders");
-  printf("%s\n", sb->s);
-  sbAppendString(sb, "Anders");
-  sbAppendString(sb, "Anders");
-  printf("%s\n", sb->s);
-  sbResize(sb, strlen("Hej Anders"));
-  printf("%s\n", sb->s);
-
-  sbAppendChar(sb, '$');
-  sbAppendChar(sb, '$');
-  sbAppendChar(sb, '$');
-  sbAppendChar(sb, '$');
-  sbAppendChar(sb, '$');
-  printf("%s\n", sb->s);
-
-  sbFree(sb);
-  free(sb);
-
-  return 0;
 }
 
 #endif // STRING_BUFFER_H
