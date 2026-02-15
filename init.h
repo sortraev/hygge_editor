@@ -61,4 +61,13 @@ int init_raw_mode(void) {
   return 0;
 }
 
+int get_window_dims(int *rows, int *cols) {
+  struct winsize _winsize;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &_winsize) == -1)
+    return 1;
+  *rows = _winsize.ws_row;
+  *cols = _winsize.ws_col;
+  return 0;
+}
+
 #endif // INIT_H

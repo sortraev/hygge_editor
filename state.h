@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "init.h"
 #include "string_buffer.h"
 
 typedef struct {
@@ -28,7 +29,7 @@ State *stateInit() {
   }
 
   state->sb = sbWithCapacity(16);
-
+  get_window_dims(&state->windowHeight, &state->windowWidth);
   return state;
 }
 
