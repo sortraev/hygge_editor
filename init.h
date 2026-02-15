@@ -55,22 +55,6 @@ int init_raw_mode(void) {
     return 1;
   }
 
-  // pthread_t thd1;
-  // int pthread_create_errno =
-  //   pthread_create(&thd1, NULL, user_input_handler_thread, NULL);
-  // if (pthread_create_errno != 0) {
-  //   fprintf(stderr, "Failed to start user input handler thread: %s\n",
-  //                   strerror(pthread_create_errno));
-  //   return 1;
-  // }
-
-  // set window dims -- use defaults on failure.
-  // if (set_window_dims() != 0) {
-  //   H = 10;
-  //   W = 10;
-  //   W0 = W + 1;
-  // }
-
   // printf("\x1b[?25l");   // hide cursor.
   printf("\x1b[?1049h"); // switch to alternate screen.
 
