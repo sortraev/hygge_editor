@@ -5,14 +5,8 @@
 
 #include "string_buffer.h"
 
-typedef enum mode {
-  NORMAL,
-  INSERT
-} EMode;
-
 typedef struct {
   int running;
-  EMode mode;
 
   FILE *outFile;
 
@@ -34,7 +28,6 @@ State *stateInit() {
   }
 
   state->sb = sbWithCapacity(16);
-  state->mode = INSERT;
 
   return state;
 }
