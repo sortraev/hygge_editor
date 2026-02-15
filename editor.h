@@ -28,18 +28,18 @@ void processKey(State *state, char c) {
   if (c == '\x1b' || c == CTRL_KEY('q')) {
     state->running = 0;
   }
-  else if (c == '\n') {
-    sbAppendChar(state->sb, '\n');
-    state->cursorY++;
-    state->cursorX = 0;
-  }
-  else if (isprint(c)) {
-    sbAppendChar(state->sb, c);
-    state->cursorX++;
-  }
-  else if (iscntrl(c)) {
-    controlKeyDebugPrint(state, c);
-  }
+  // else if (c == '\n') {
+  //   sbAppendChar(state->sb, '\n');
+  //   state->cursorY++;
+  //   state->cursorX = 0;
+  // }
+  // else if (isprint(c)) {
+  //   sbAppendChar(state->sb, c);
+  //   state->cursorX++;
+  // }
+  // else if (iscntrl(c)) {
+  //   controlKeyDebugPrint(state, c);
+  // }
 }
 
 
