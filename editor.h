@@ -19,19 +19,47 @@ char readKeyBlocking() {
   return c;
 }
 
-void controlKeyDebugPrint(State *state) {
-  if (state->lastControlKey >= 0) {
-    printf("\x1b[999;1H"); // move cursor to bottommost line
-    printf("Last control key: %d", state->lastControlKey);
+void debugPrint(State *state) {
+  printf("\x1b[999;1H"); // move cursor to bottommost line
+  printf("\x1b[K");      // clear line
+  printf("Last CTRL key: %d, cursor (y, x) = (%d, %d)",
+      state->lastControlKey,
+      state->cursorY,
+      state->cursorX);
+}
+
+void processCursorMovementKey(State *state, int c) {
+  switch (c) {
+    case 'k': // up
+      state->cursorY--;
+      break;
+    case 'j': // down
+      state->cursorY++;
+      break;
+    case 'h': // left
+      state->cursorX--;
+      break;
+    case 'l': // right
+      state->cursorX++;
+      break;
   }
 }
 
 void processKey(State *state, char c) {
-  if (c == '\x1b' || c == CTRL_KEY('q')) {
-    state->running = 0;
-  }
-  else if (iscntrl(c)) {
+  if (iscntrl(c)) {
     state->lastControlKey = c;
+  }
+  switch (c) {
+    case '\x1b':
+    case CTRL_KEY('q'):
+      state->running = 0;
+      break;
+    case CTRL_KEY('h'):
+    case CTRL_KEY('j'):
+    case CTRL_KEY('k'):
+    case CTRL_KEY('l'):
+      processCursorMovementKey(state, CTRL_KEY(c));
+      break;
   }
 }
 
@@ -48,7 +76,7 @@ void refreshScreen(State *state) {
 
   drawEditorRows(state);
 
-  controlKeyDebugPrint(state);
+  debugPrint(state);
 
   printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
 }
