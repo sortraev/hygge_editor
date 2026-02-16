@@ -3,7 +3,7 @@
 #include <ctype.h> // iscntrl
 
 #include "editor.h"
-#include "init.h"
+#include "terminal.h"
 #include "state.h"
 
 int main(int argc, char **argv) {
@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (init_raw_mode() != 0) {
+  if (init_terminal_mode() != 0) {
     fprintf(stderr, "Failed to init terminal raw mode, exiting\n");
     fclose(f);
     return 1;

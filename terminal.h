@@ -1,5 +1,5 @@
-#ifndef INIT_H
-#define INIT_H
+#ifndef TERMINAL_H
+#define TERMINAL_H
 
 #include <unistd.h>
 #include <stdio.h>
@@ -18,6 +18,7 @@ struct termios ORIG_TERMIOS;
 int set_terminal_raw_mode(void) {
   struct termios raw = ORIG_TERMIOS;
   // TODO: go over these flags.
+  // might want to add a timeout on reads in order to handle escape sequences.
   raw.c_iflag &= ~(IXON);
   raw.c_lflag &= ~(ECHO | ICANON);
 
@@ -29,12 +30,7 @@ void reset_terminal_mode(void) {
   tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
 }
 
-void sigint_handler(int sig) {
-  if (sig == SIGINT)
-    exit(0);
-}
-
-int init_raw_mode(void) {
+int init_terminal_mode(void) {
   /*
    * check that we are writing to a tty; register exit handlers; init
    * ORIG_TERMIOS (for proper resetting to cooked mode); and set raw mode.
@@ -60,11 +56,16 @@ int init_raw_mode(void) {
 
 int get_window_dims(Dims *dims) {
   struct winsize _winsize;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &_winsize) == -1)
+  if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;
   dims->y = _winsize.ws_row;
   dims->x = _winsize.ws_col;
   return 0;
 }
 
-#endif // INIT_H
+void sigint_handler(int sig) {
+  if (sig == SIGINT)
+    exit(0);
+}
+
+#endif // TERMINAL_H

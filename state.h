@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "init.h"
+#include "terminal.h"
 #include "string_buffer.h"
 
 typedef struct {
@@ -21,7 +21,7 @@ typedef struct {
 
 } State;
 
-State *stateInit() {
+State *stateInit(void) {
   State *state = calloc(1, sizeof(State));
 
   if (!state) {

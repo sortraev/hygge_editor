@@ -9,7 +9,7 @@
 
 #define CTRL_KEY(key) ((key) & 0x1f)
 
-char readKeyBlocking() {
+char readKeyBlocking(void) {
   char c;
   int num_read;
   while ((num_read = fread(&c, sizeof(char), 1, stdin)) != 1) {
