@@ -19,36 +19,37 @@ char readKeyBlocking() {
   return c;
 }
 
-void controlKeyDebugPrint(State *state, char c) {
-  printf("\x1b[999;1H"); // move cursor to bottommost line
-  printf("Last control key: %d", c);
+void controlKeyDebugPrint(State *state) {
+  if (state->lastControlKey >= 0) {
+    printf("\x1b[999;1H"); // move cursor to bottommost line
+    printf("Last control key: %d", state->lastControlKey);
+  }
 }
 
 void processKey(State *state, char c) {
   if (c == '\x1b' || c == CTRL_KEY('q')) {
     state->running = 0;
   }
-  // else if (c == '\n') {
-  //   sbAppendChar(state->sb, '\n');
-  //   state->cursorY++;
-  //   state->cursorX = 0;
-  // }
-  // else if (isprint(c)) {
-  //   sbAppendChar(state->sb, c);
-  //   state->cursorX++;
-  // }
-  // else if (iscntrl(c)) {
-  //   controlKeyDebugPrint(state, c);
-  // }
+  else if (iscntrl(c)) {
+    state->lastControlKey = c;
+  }
 }
 
+void drawEditorRows(State *state) {
+  for (int i = 0; i < state->windowHeight - 1; i++)
+    printf("~\n");
+  if (state->windowHeight > 0)
+    printf("~");
+}
 
 void refreshScreen(State *state) {
-  // printf("\x1b[2J"); // clear screen
+  printf("\x1b[2J"); // clear screen
   printf("\x1b[H");  // move cursor to top left
 
-  StringBuffer *editorBuffer = state->sb;
-  fwrite(editorBuffer->s, sizeof(char), editorBuffer->len, stdout);
+  drawEditorRows(state);
+
+  controlKeyDebugPrint(state);
+
   printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
 }
 
