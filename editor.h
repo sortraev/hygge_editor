@@ -22,33 +22,33 @@ char readKeyBlocking() {
 void debugPrint(State *state) {
   printf("\x1b[999;1H"); // move cursor to bottommost line
   printf("\x1b[K");      // clear line
-  printf("Last CTRL key: %d, cursor (y, x) = (%d, %d)",
-      state->lastControlKey,
-      state->cursorY,
-      state->cursorX);
+
+  if (isprint(state->lastKey))
+    printf("Last key: '%c'", state->lastKey);
+  else
+    printf("Last key: %d", state->lastKey);
+  printf(", cursor (y, x) = (%d, %d)", state->cursorY, state->cursorX);
 }
 
 void processCursorMovementKey(State *state, int c) {
   switch (c) {
-    case 'k': // up
+    case CTRL_KEY('k'): // up
       state->cursorY--;
       break;
-    case 'j': // down
+    case CTRL_KEY('j'): // down
       state->cursorY++;
       break;
-    case 'h': // left
+    case CTRL_KEY('h'): // left
       state->cursorX--;
       break;
-    case 'l': // right
+    case CTRL_KEY('l'): // right
       state->cursorX++;
       break;
   }
 }
 
 void processKey(State *state, char c) {
-  if (iscntrl(c)) {
-    state->lastControlKey = c;
-  }
+  state->lastKey = c;
   switch (c) {
     case '\x1b':
     case CTRL_KEY('q'):
@@ -58,7 +58,7 @@ void processKey(State *state, char c) {
     case CTRL_KEY('j'):
     case CTRL_KEY('k'):
     case CTRL_KEY('l'):
-      processCursorMovementKey(state, CTRL_KEY(c));
+      processCursorMovementKey(state, c);
       break;
   }
 }

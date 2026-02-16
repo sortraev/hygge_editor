@@ -19,7 +19,7 @@ typedef struct {
   int windowHeight;
   int windowWidth;
 
-  int lastControlKey;
+  int lastKey;
 
 } State;
 
@@ -31,7 +31,7 @@ State *stateInit() {
   }
 
   state->sb = sbWithCapacity(16);
-  state->lastControlKey = -1;
+  state->lastKey = -1;
   get_window_dims(&state->windowHeight, &state->windowWidth);
   return state;
 }
