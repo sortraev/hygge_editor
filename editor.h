@@ -30,26 +30,26 @@ void debugPrint(State *state) {
     printf("Last key: '%c'", state->lastKey);
   else
     printf("Last key: %d", state->lastKey);
-  printf(", cursor (y, x) = (%d, %d)", state->cursorY, state->cursorX);
+  printf(", cursor (y, x) = (%d, %d)", state->cursor.y, state->cursor.x);
 }
 
 void processCursorMovementKey(State *state, int c) {
   switch (c) {
     case CTRL_KEY('k'): // up
-      if (state->cursorY > 0)
-        state->cursorY--;
+      if (state->cursor.y > 0)
+        state->cursor.y--;
       break;
     case CTRL_KEY('j'): // down
-      if (state->cursorY < state->windowHeight - 1)
-        state->cursorY++;
+      if (state->cursor.y < state->windowDims.y - 1)
+        state->cursor.y++;
       break;
     case CTRL_KEY('h'): // left
-      if (state->cursorX > 0)
-        state->cursorX--;
+      if (state->cursor.x > 0)
+        state->cursor.x--;
       break;
     case CTRL_KEY('l'): // right
-      if (state->cursorX < state->windowWidth - 1)
-        state->cursorX++;
+      if (state->cursor.x < state->windowDims.x - 1)
+        state->cursor.x++;
       break;
   }
 }
@@ -71,9 +71,9 @@ void processKey(State *state, char c) {
 }
 
 void drawEditorRows(State *state) {
-  for (int i = 0; i < state->windowHeight - 1; i++)
+  for (int i = 0; i < state->windowDims.y - 1; i++)
     printf("~\n");
-  if (state->windowHeight > 0)
+  if (state->windowDims.y > 0)
     printf("~");
 }
 
@@ -85,7 +85,7 @@ void refreshScreen(State *state) {
 
   debugPrint(state);
 
-  printf("\x1b[%d;%dH", state->cursorY + 1, state->cursorX + 1); // move cursor to buffer position
+  printf("\x1b[%d;%dH", state->cursor.y + 1, state->cursor.x + 1); // move cursor to buffer position
 }
 
 #endif // EDITOR_H

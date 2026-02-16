@@ -7,17 +7,20 @@
 #include "string_buffer.h"
 
 typedef struct {
+  int y;
+  int x;
+} Dims;
+
+typedef struct {
   int running;
 
   FILE *outFile;
 
   StringBuffer *sb;
 
-  int cursorY;
-  int cursorX;
+  Dims cursor;
 
-  int windowHeight;
-  int windowWidth;
+  Dims windowDims;
 
   int lastKey;
 
@@ -33,7 +36,7 @@ State *stateInit() {
   state->sb = sbWithCapacity(16);
   state->lastKey = -1;
 
-  get_window_dims(&state->windowHeight, &state->windowWidth);
+  get_window_dims(&state->windowDims.y, &state->windowDims.x);
 
   return state;
 }
