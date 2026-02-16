@@ -19,6 +19,7 @@ char readKeyBlocking() {
   return c;
 }
 
+
 void debugPrint(State *state) {
   printf("\x1b[999;1H"); // move cursor to bottommost line
   printf("\x1b[K");      // clear line
@@ -33,16 +34,20 @@ void debugPrint(State *state) {
 void processCursorMovementKey(State *state, int c) {
   switch (c) {
     case CTRL_KEY('k'): // up
-      state->cursorY--;
+      if (state->cursorY > 0)
+        state->cursorY--;
       break;
     case CTRL_KEY('j'): // down
-      state->cursorY++;
+      if (state->cursorY < state->windowHeight - 1)
+        state->cursorY++;
       break;
     case CTRL_KEY('h'): // left
-      state->cursorX--;
+      if (state->cursorX > 0)
+        state->cursorX--;
       break;
     case CTRL_KEY('l'): // right
-      state->cursorX++;
+      if (state->cursorX < state->windowWidth - 1)
+        state->cursorX++;
       break;
   }
 }
