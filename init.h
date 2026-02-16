@@ -11,6 +11,8 @@
 
 #include <signal.h>
 
+#include "dims.h"
+
 struct termios ORIG_TERMIOS;
 
 int set_terminal_raw_mode(void) {
@@ -56,12 +58,12 @@ int init_raw_mode(void) {
   return 0;
 }
 
-int get_window_dims(int *rows, int *cols) {
+int get_window_dims(Dims *dims) {
   struct winsize _winsize;
   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &_winsize) == -1)
     return 1;
-  *rows = _winsize.ws_row;
-  *cols = _winsize.ws_col;
+  dims->y = _winsize.ws_row;
+  dims->x = _winsize.ws_col;
   return 0;
 }
 
