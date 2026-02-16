@@ -24,7 +24,7 @@ typedef struct {
 } State;
 
 State *stateInit() {
-  State *state = malloc(sizeof(State));
+  State *state = calloc(1, sizeof(State));
 
   if (!state) {
     return NULL;
@@ -32,7 +32,9 @@ State *stateInit() {
 
   state->sb = sbWithCapacity(16);
   state->lastKey = -1;
+
   get_window_dims(&state->windowHeight, &state->windowWidth);
+
   return state;
 }
 
