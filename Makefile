@@ -12,4 +12,4 @@ debug: $(main)
 compile: $(main)
 
 $(main): $(src)
-	gcc -Wall -pedantic $< -g3 -o $@
+	gcc -Wall -Wextra -pedantic $< -g3 -o $@
