@@ -24,7 +24,6 @@ int set_terminal_raw_mode(void) {
 
 void reset_terminal_mode(void) {
   printf("\x1b[?1049l"); // switch back from alternate screen.
-  // printf("\x1b[?25h");   // show cursor.
   tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
 }
 
@@ -38,10 +37,6 @@ int init_raw_mode(void) {
    * check that we are writing to a tty; register exit handlers; init
    * ORIG_TERMIOS (for proper resetting to cooked mode); and set raw mode.
    */
-  if (!isatty(fileno(stdout))) {
-    fprintf(stderr, "stdout is not a tty\n");
-    return 1;
-  }
   if (tcgetattr(0, &ORIG_TERMIOS) != 0) {
     fprintf(stderr, "Failed to get original termios: %s\n", strerror(errno));
     return 1;
@@ -54,9 +49,9 @@ int init_raw_mode(void) {
     fprintf(stderr, "Failed to set raw mode: %s\n", strerror(errno));
     return 1;
   }
-
-  // printf("\x1b[?25l");   // hide cursor.
-  printf("\x1b[?1049h"); // switch to alternate screen.
+  if (isatty(fileno(stdout))) {
+    printf("\x1b[?1049h"); // switch to alternate screen.
+  }
 
   return 0;
 }
