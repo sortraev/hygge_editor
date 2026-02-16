@@ -11,7 +11,7 @@ typedef struct {
 
   FILE *outFile;
 
-  StringBuffer *sb;
+  StringBuffer sb;
 
   Dims cursor;
 
@@ -28,7 +28,13 @@ State *stateInit() {
     return NULL;
   }
 
-  state->sb = sbWithCapacity(16);
+  state->sb = sbEmpty();
+  if (sbInitWithCapacity(&state->sb, 16) != 0) {
+    fprintf(stderr, "Failed to init state string buffer\n");
+    free(state);
+    return NULL;
+  }
+
   state->lastKey = -1;
 
   get_window_dims(&state->windowDims);
@@ -38,8 +44,7 @@ State *stateInit() {
 
 void stateFree(State *state) {
   if (state) {
-    sbFree(state->sb);
-    free(state->sb);
+    sbFree(&state->sb);
   }
 }
 

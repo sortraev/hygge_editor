@@ -9,27 +9,22 @@ typedef struct {
   size_t cap;
 } StringBuffer;
 
-StringBuffer sbEmpty() {
+StringBuffer sbEmpty(void) {
   return (StringBuffer) { NULL, 0, 0 };
 }
 
-StringBuffer *sbWithCapacity(size_t initCap) {
-  StringBuffer *sb = malloc(sizeof(StringBuffer));
-  if (!sb) {
-    return NULL;
-  }
+int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
 
   initCap = initCap < 1 ? 1 : initCap;
   sb->s = calloc(initCap, sizeof(char));
   if (!sb->s) {
-    free(sb);
-    return NULL;
+    return 1;
   }
 
   sb->cap = initCap;
   sb->len = 0;
 
-  return sb;
+  return 0;
 }
 
 int sbResize(StringBuffer *sb, size_t newMaxLen) {
