@@ -37,7 +37,7 @@ State *stateInit(void) {
 
   state->lastKey = -1;
 
-  get_window_dims(&state->windowDims);
+  getWindowDims(&state->windowDims);
 
   return state;
 }

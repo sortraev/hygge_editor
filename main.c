@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (init_terminal_mode() != 0) {
+  if (initTerminal() != 0) {
     fprintf(stderr, "Failed to init terminal raw mode, exiting\n");
     fclose(f);
     return 1;
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     processKey(state, c);
   }
 
-  reset_terminal_mode();
+  resetTerminalMode();
 
   stateFree(state);
   free(state);

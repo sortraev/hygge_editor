@@ -15,8 +15,23 @@
 
 struct termios ORIG_TERMIOS;
 
-int set_terminal_raw_mode(void) {
+void resetTerminalMode(void) {
+  printf("\x1b[?1049l"); // switch back from alternate screen.
+  tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
+}
+
+int _setTerminalRawMode(void) {
+  if (tcgetattr(0, &ORIG_TERMIOS) != 0) {
+    fprintf(stderr, "Failed to backup termios: %s\n", strerror(errno));
+    return 1;
+  }
+
+  if (atexit(resetTerminalMode) != 0) {
+    fprintf(stderr, "Failed to set terminal mode exit handler: %s\n", strerror(errno));
+    return 1;
+  }
   struct termios raw = ORIG_TERMIOS;
+
   // TODO: go over these flags.
   // might want to add a timeout on reads in order to handle escape sequences.
   raw.c_iflag &= ~(IXON);
@@ -25,28 +40,13 @@ int set_terminal_raw_mode(void) {
   return tcsetattr(fileno(stdin), TCSAFLUSH, &raw);
 }
 
-void reset_terminal_mode(void) {
-  printf("\x1b[?1049l"); // switch back from alternate screen.
-  tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
-}
+int initTerminal(void) {
 
-int init_terminal_mode(void) {
-  /*
-   * check that we are writing to a tty; register exit handlers; init
-   * ORIG_TERMIOS (for proper resetting to cooked mode); and set raw mode.
-   */
-  if (tcgetattr(0, &ORIG_TERMIOS) != 0) {
-    fprintf(stderr, "Failed to get original termios: %s\n", strerror(errno));
-    return 1;
-  }
-  if (atexit(reset_terminal_mode) != 0) {
-    fprintf(stderr, "Failed to set atexit: %s\n", strerror(errno));
-    return 1;
-  }
-  if (set_terminal_raw_mode() != 0) {
+  if (_setTerminalRawMode() != 0) {
     fprintf(stderr, "Failed to set raw mode: %s\n", strerror(errno));
     return 1;
   }
+
   if (isatty(fileno(stdout))) {
     printf("\x1b[?1049h"); // switch to alternate screen.
   }
@@ -54,18 +54,13 @@ int init_terminal_mode(void) {
   return 0;
 }
 
-int get_window_dims(Dims *dims) {
+int getWindowDims(Dims *dims) {
   struct winsize _winsize;
   if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;
   dims->y = _winsize.ws_row;
   dims->x = _winsize.ws_col;
   return 0;
-}
-
-void sigint_handler(int sig) {
-  if (sig == SIGINT)
-    exit(0);
 }
 
 #endif // TERMINAL_H
