@@ -12,6 +12,7 @@
 #include <signal.h>
 
 #include "dims.h"
+#include "assert.h"
 
 struct termios ORIG_TERMIOS;
 
@@ -55,6 +56,8 @@ int initTerminal(void) {
 }
 
 int getWindowDims(Dims *dims) {
+  NOTNULL_(dims);
+
   struct winsize _winsize;
   if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;

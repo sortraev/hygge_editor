@@ -1,7 +1,8 @@
 #ifndef STRING_BUFFER_H
 #define STRING_BUFFER_H
 
-#include "string.h"
+#include <string.h>
+#include "assert.h"
 
 typedef struct {
   char *s;
@@ -14,10 +15,10 @@ StringBuffer sbEmpty(void) {
 }
 
 int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
+  NOTNULL_(sb);
 
-  initCap = initCap < 1 ? 1 : initCap;
   sb->s = calloc(initCap, sizeof(char));
-  if (!sb->s) {
+  if (!sb->s && initCap > 0) {
     return 1;
   }
 
@@ -28,6 +29,8 @@ int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
 }
 
 int sbResize(StringBuffer *sb, size_t newMaxLen) {
+  NOTNULL_(sb);
+
   size_t newCap = newMaxLen + 1;
 
   if (newCap <= 0) {
@@ -52,10 +55,15 @@ int sbResize(StringBuffer *sb, size_t newMaxLen) {
 }
 
 int sbShrink(StringBuffer *sb) {
+  NOTNULL_(sb);
+
   return sbResize(sb, sb->len);
 }
 
 int sbAppendString(StringBuffer *sb, char *s) {
+  NOTNULL_(sb);
+  NOTNULL_(s);
+
   size_t newLen = sb->len + strlen(s);
   if (newLen + 1 > sb->cap) {
     sbResize(sb, newLen);
@@ -68,6 +76,8 @@ int sbAppendString(StringBuffer *sb, char *s) {
 }
 
 int sbAppendChar(StringBuffer *sb, char c) {
+  NOTNULL_(sb);
+
   size_t newLen = sb->len + 1;
   if (newLen + 1 > sb->cap) {
     sbResize(sb, (size_t) sb->len * 1.5);

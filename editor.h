@@ -23,6 +23,8 @@ char readKeyBlocking(void) {
 
 
 void debugPrint(State *state) {
+  NOTNULL_(state);
+
   printf("\x1b[999;1H"); // move cursor to bottommost line
   printf("\x1b[K");      // clear line
 
@@ -34,6 +36,8 @@ void debugPrint(State *state) {
 }
 
 void processCursorMovementKey(State *state, int c) {
+  NOTNULL_(state);
+
   switch (c) {
     case CTRL_KEY('k'): // up
       if (state->cursor.y > 0)
@@ -55,6 +59,8 @@ void processCursorMovementKey(State *state, int c) {
 }
 
 void processKey(State *state, char c) {
+  NOTNULL_(state);
+
   state->lastKey = c;
   switch (c) {
     case '\x1b':
@@ -71,6 +77,8 @@ void processKey(State *state, char c) {
 }
 
 void drawEditorRows(State *state) {
+  NOTNULL_(state);
+
   for (int i = 0; i < state->windowDims.y - 1; i++)
     printf("~\n");
   if (state->windowDims.y > 0)
@@ -78,6 +86,8 @@ void drawEditorRows(State *state) {
 }
 
 void refreshScreen(State *state) {
+  NOTNULL_(state);
+
   printf("\x1b[2J"); // clear screen
   printf("\x1b[H");  // move cursor to top left
 
