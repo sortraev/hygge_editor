@@ -23,6 +23,9 @@ void _assert(int cond, const char *fmt, ...) {
 #define NOTNULL(expr, msg) ASSERT((void*)(expr) != NULL, msg)
 
 #define STR(x) #x
+
+#define ASSERT_(cond) ASSERT((cond), "Assertion failed: " STR(cond))
+
 #define NOTNULL_(expr) NOTNULL((expr), STR(expr) " is null")
 
 #endif // ASSERT_H
