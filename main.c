@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   }
 
   State *state = stateInit();
-  state->outFile = f;
+  state->f = f;
   state->running = 1;
 
   while (state->running) {

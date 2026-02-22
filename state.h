@@ -9,7 +9,7 @@
 typedef struct {
   int running;
 
-  FILE *outFile;
+  FILE *f;
 
   StringBuffer sb;
 
