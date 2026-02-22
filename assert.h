@@ -1,6 +1,8 @@
 #ifndef ASSERT_H
 #define ASSERT_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 
 void _assert(int cond, const char *fmt, ...) {
