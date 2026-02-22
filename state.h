@@ -28,7 +28,6 @@ State *stateInit(void) {
     return NULL;
   }
 
-  state->sb = sbEmpty();
   if (sbInitWithCapacity(&state->sb, 16) != 0) {
     fprintf(stderr, "Failed to init state string buffer\n");
     free(state);
