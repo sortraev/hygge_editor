@@ -8,25 +8,13 @@
 
 int main(int argc, char **argv) {
 
-  FILE *f = stdout;
-
-  if (argc >= 2) {
-    char *filename = argv[1];
-    f = fopen(filename, "rw");
-    if (!f) {
-      fprintf(stderr, "Failed to open file \"%s\".\n", filename);
-      return 1;
-    }
-  }
-
   if (initTerminal() != 0) {
     fprintf(stderr, "Failed to init terminal raw mode, exiting\n");
-    fclose(f);
     return 1;
   }
 
   State *state = stateInit();
-  state->f = f;
+  state->filename = argc >= 2 ? argv[1] : NULL;
   state->running = 1;
 
   while (state->running) {
@@ -39,7 +27,6 @@ int main(int argc, char **argv) {
 
   stateFree(state);
   free(state);
-  fclose(f);
 
   return 0;
 }
