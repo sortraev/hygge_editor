@@ -74,6 +74,10 @@ int sbInsertString(StringBuffer *sb, size_t i, char *s) {
   NOTNULL_(sb);
   NOTNULL_(s);
 
+  if (i > sb->len) {
+    return 1;
+  }
+
   size_t sLen = strlen(s);
   size_t newLen = sb->len + sLen;
   if (newLen + 1 > sb->cap) { // +1 to account for null byte
@@ -93,6 +97,10 @@ int sbInsertString(StringBuffer *sb, size_t i, char *s) {
 
 int sbInsertChar(StringBuffer *sb, size_t i, char c) {
   NOTNULL_(sb);
+
+  if (i > sb->len) {
+    return 1;
+  }
 
   size_t newLen = sb->len + 1;
   if (newLen + 1 > sb->cap) { // +1 to account for null byte
