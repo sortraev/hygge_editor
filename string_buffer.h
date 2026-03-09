@@ -16,7 +16,8 @@ StringBuffer sbEmpty(void) {
 
 // we want an init cap of > 1 to guarantee dynamic expansion always succeeds
 // when expansion rate is > 1
-#define MIN_INIT_CAP 2
+#define MIN_INIT_CAP 16
+#define MIN_EXPAND MIN_INIT_CAP
 #define EXPANSION_RATE 1.5f
 
 int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
@@ -37,11 +38,7 @@ int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
 
 int sbResize(StringBuffer *sb, size_t newCap) {
   NOTNULL_(sb);
-
-  if (newCap <= 0) {
-    fprintf(stderr, "sbResize(): invalid newCap: %ld\n", newCap);
-    return 1;
-  }
+  newCap = newCap >= 1 ? newCap : 1;
 
   char *tmp = realloc(sb->s, newCap * sizeof(char));
   if (!tmp) {
@@ -52,7 +49,7 @@ int sbResize(StringBuffer *sb, size_t newCap) {
   sb->s = tmp;
   sb->cap = newCap;
 
-  if (sb->len >= sb->cap)
+  if (sb->len >= newCap)
     sb->len = sb->cap - 1;
 
   memset(sb->s + sb->len, 0, sb->cap - sb->len);
@@ -62,39 +59,66 @@ int sbResize(StringBuffer *sb, size_t newCap) {
   return 0;
 }
 
+int sbExpand(StringBuffer *sb) {
+  NOTNULL_(sb);
+  size_t newCap = sb->cap <= 1 ? MIN_EXPAND : sb->cap * EXPANSION_RATE;
+  return sbResize(sb, newCap);
+}
+
 int sbShrink(StringBuffer *sb) {
   NOTNULL_(sb);
   return sbResize(sb, sb->len + 1);
 }
 
-int sbAppendString(StringBuffer *sb, char *s) {
+int sbInsertString(StringBuffer *sb, size_t i, char *s) {
   NOTNULL_(sb);
   NOTNULL_(s);
 
-  size_t newLen = sb->len + strlen(s);
+  size_t sLen = strlen(s);
+  size_t newLen = sb->len + sLen;
   if (newLen + 1 > sb->cap) { // +1 to account for null byte
     int resizeStatus = sbResize(sb, newLen + 1);
     if (resizeStatus != 0)
       return resizeStatus;
   }
 
-  strcpy(sb->s + sb->len, s);
+  // make room for the new substring by shifting the tail of the string
+  memmove(sb->s + i + sLen, sb->s + i, sb->len - i);
+  // insert the new substring
+  memcpy(sb->s + i, s, sLen);
+
   sb->len = newLen;
-  sb->s[newLen] = '\0';
   return 0;
 }
 
-int sbAppendChar(StringBuffer *sb, char c) {
+int sbInsertChar(StringBuffer *sb, size_t i, char c) {
   NOTNULL_(sb);
 
   size_t newLen = sb->len + 1;
   if (newLen + 1 > sb->cap) { // +1 to account for null byte
-    int resizeStatus = sbResize(sb, (size_t) sb->cap * EXPANSION_RATE);
+    int resizeStatus = sbExpand(sb);
     if (resizeStatus != 0)
       return resizeStatus;
   }
-  sb->s[sb->len++] = c;
+
+  // make room for the new byte by shifting the tail of the string
+  memmove(sb->s + i + 1, sb->s + i, sb->len - i);
+  // insert the new byte
+  sb->s[i] = c;
+
+  sb->len++;
   return 0;
+}
+
+int sbAppendString(StringBuffer *sb, char *s) {
+  NOTNULL_(sb);
+  NOTNULL_(s);
+  return sbInsertString(sb, sb->len, s);
+}
+
+int sbAppendChar(StringBuffer *sb, char c) {
+  NOTNULL_(sb);
+  return sbInsertChar(sb, sb->len, c);
 }
 
 void sbFree(StringBuffer *sb) {
