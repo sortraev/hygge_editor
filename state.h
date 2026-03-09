@@ -5,13 +5,15 @@
 
 #include "dims.h"
 #include "terminal.h"
-#include "string_buffer.h"
+#include "lines.h"
 
 typedef struct {
   int running;
 
   FILE *f;
   char *filename;
+
+  Lines lines;
 
   Dims cursor;
 
@@ -29,6 +31,8 @@ State *stateInit(void) {
   }
 
   state->lastKey = -1;
+
+  state->lines = linesEmpty();
 
   getWindowDims(&state->windowDims);
 
