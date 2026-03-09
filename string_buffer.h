@@ -6,8 +6,8 @@
 
 typedef struct {
   char *s;
-  size_t len;
-  size_t cap;
+  size_t len; // length of string *excluding* null byte, i.e. len >= 0
+  size_t cap; // buffer capacity including room for null byte, i.e. len < cap
 } StringBuffer;
 
 StringBuffer sbEmpty(void) {
@@ -49,7 +49,7 @@ int sbResize(StringBuffer *sb, size_t newCap) {
   sb->s = tmp;
   sb->cap = newCap;
 
-  if (sb->len >= newCap)
+  if (sb->len >= sb->cap)
     sb->len = sb->cap - 1;
 
   memset(sb->s + sb->len, 0, sb->cap - sb->len);
