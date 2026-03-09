@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "dims.h"
 #include "terminal.h"
 #include "string_buffer.h"
 
