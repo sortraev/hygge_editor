@@ -44,7 +44,7 @@ void processCursorMovementKey(State *state, int c) {
         state->cursor.y--;
       break;
     case CTRL_KEY('j'): // down
-      if (state->cursor.y < state->windowDims.y - 1)
+      if (state->cursor.y + 1 < state->lines.numLines)
         state->cursor.y++;
       break;
     case CTRL_KEY('h'): // left
@@ -52,7 +52,11 @@ void processCursorMovementKey(State *state, int c) {
         state->cursor.x--;
       break;
     case CTRL_KEY('l'): // right
-      if (state->cursor.x < state->windowDims.x - 1)
+      StringBuffer *line =
+        state->cursor.y < state->lines.numLines
+          ? state->lines.lineBufs + state->cursor.y
+          : NULL;
+      if (line && state->cursor.x + 1 < line->len)
         state->cursor.x++;
       break;
   }
