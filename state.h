@@ -34,6 +34,9 @@ State *stateInit(void) {
 
   state->lines = linesEmpty();
 
+  // TODO: placeholder. should insert better handling of empty files.
+  linesAppendEmpty(&state->lines);
+
   getWindowDims(&state->windowDims);
 
   return state;
