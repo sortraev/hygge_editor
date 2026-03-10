@@ -44,7 +44,7 @@ State *stateInit(void) {
 
 void stateFree(State *state) {
   if (state) {
-    // for now, do nothing.
+    linesFree(&state->lines);
     // TODO: close state->f?
   }
 }
