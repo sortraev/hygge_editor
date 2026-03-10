@@ -1,3 +1,5 @@
 my_editor
 main
 a.out
+valgrind.log
+vgcore*
