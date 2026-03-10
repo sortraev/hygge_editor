@@ -31,7 +31,8 @@ void debugPrint(State *state) {
     printf("Last key: '%c'", state->lastKey);
   else
     printf("Last key: %d", state->lastKey);
-  printf(", cursor (y, x) = (%ld, %ld)", state->cursor.y, state->cursor.x);
+  printf(", cursor (y, x) = (%lu, %lu)", state->cursor.y, state->cursor.x);
+  printf(", numLines = %lu", state->lines.numLines);
 }
 
 void processCursorMovementKey(State *state, int c) {
