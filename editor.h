@@ -58,11 +58,30 @@ void processCursorMovementKey(State *state, int c) {
   }
 }
 
+void insertNewline(State *state) {
+  NOTNULL_(state);
+  linesInsertEmpty(&state->lines, state->cursor.y);
+  state->cursor.y++;
+  state->cursor.x = 0;
+}
+
+void insertChar(State *state, char c) {
+  NOTNULL_(state);
+  linesInsertChar(&state->lines, state->cursor.y, state->cursor.x, c);
+  state->cursor.x++;
+}
+
 void processKey(State *state, char c) {
   NOTNULL_(state);
 
   state->lastKey = c;
-  switch (c) {
+  if (c == '\n') {
+    insertNewline(state);
+  }
+  else if (isprint(c)) {
+    insertChar(state, c);
+  }
+  else switch (c) {
     case '\x1b':
     case CTRL_KEY('q'):
       state->running = 0;
