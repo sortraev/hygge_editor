@@ -39,19 +39,19 @@ void processCursorMovementKey(State *state, int c) {
   NOTNULL_(state);
 
   switch (c) {
-    case CTRL_KEY('k'): // up
+    case CTRL_KEY('w'): // up
       if (state->cursor.y > 0)
         state->cursor.y--;
       break;
-    case CTRL_KEY('j'): // down
+    case CTRL_KEY('s'): // down
       if (state->cursor.y + 1 < state->lines.numLines)
         state->cursor.y++;
       break;
-    case CTRL_KEY('h'): // left
+    case CTRL_KEY('a'): // left
       if (state->cursor.x > 0)
         state->cursor.x--;
       break;
-    case CTRL_KEY('l'): // right
+    case CTRL_KEY('d'): // right
       StringBuffer *line =
         state->cursor.y < state->lines.numLines
           ? state->lines.lineBufs + state->cursor.y
@@ -90,10 +90,10 @@ void processKey(State *state, char c) {
     case CTRL_KEY('q'):
       state->running = 0;
       break;
-    case CTRL_KEY('h'):
-    case CTRL_KEY('j'):
-    case CTRL_KEY('k'):
-    case CTRL_KEY('l'):
+    case CTRL_KEY('w'):
+    case CTRL_KEY('a'):
+    case CTRL_KEY('s'):
+    case CTRL_KEY('d'):
       processCursorMovementKey(state, c);
       break;
   }
