@@ -104,6 +104,17 @@ int linesInsertChar(Lines *lines, size_t line, size_t col, char c) {
   return sbInsertChar(lineBuf, col, c);
 }
 
+int linesDeleteChar(Lines *lines, size_t line, size_t col) {
+  NOTNULL_(lines);
+
+  if (line >= lines->numLines) {
+    return 1;
+  }
+
+  StringBuffer *lineBuf = lines->lineBufs + line;
+  return sbDeleteChar(lineBuf, col);
+}
+
 void linesFree(Lines *lines) {
   NOTNULL_(lines);
   if (lines) {

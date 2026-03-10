@@ -75,6 +75,11 @@ void insertChar(State *state, char c) {
   state->cursor.x++;
 }
 
+void deleteChar(State *state) {
+  NOTNULL_(state);
+  linesDeleteChar(&state->lines, state->cursor.y, state->cursor.x);
+}
+
 void processKey(State *state, char c) {
   NOTNULL_(state);
 
@@ -89,6 +94,9 @@ void processKey(State *state, char c) {
     case '\x1b':
     case CTRL_KEY('q'):
       state->running = 0;
+      break;
+    case CTRL_KEY('x'):
+      deleteChar(state);
       break;
     case CTRL_KEY('w'):
     case CTRL_KEY('a'):

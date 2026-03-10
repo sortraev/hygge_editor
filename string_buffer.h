@@ -109,8 +109,11 @@ int sbInsertChar(StringBuffer *sb, size_t i, char c) {
       return resizeStatus;
   }
 
-  // make room for the new byte by shifting the tail of the string
-  memmove(sb->s + i + 1, sb->s + i, sb->len - i);
+  // make room for the new byte by shifting the tail-end of the string
+  // (including null byte) to the right
+  char *src = sb->s + i;
+  memmove(src + 1, src, sb->len - i);
+
   // insert the new byte
   sb->s[i] = c;
 
@@ -127,6 +130,24 @@ int sbAppendString(StringBuffer *sb, char *s) {
 int sbAppendChar(StringBuffer *sb, char c) {
   NOTNULL_(sb);
   return sbInsertChar(sb, sb->len, c);
+}
+
+int sbDeleteChar(StringBuffer *sb, size_t i) {
+  NOTNULL_(sb);
+
+  if (i >= sb->len) {
+    return 1;
+  }
+
+  // delete a byte by left-shifting tail-end of the string (including null byte)
+  // left onto the deletion point
+  char *dst = sb->s + i;
+  memmove(dst, dst + 1, sb->len - i);
+  sb->len--;
+
+  // TODO: shrink buffer if necessary.
+
+  return 0;
 }
 
 void sbFree(StringBuffer *sb) {
