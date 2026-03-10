@@ -18,13 +18,13 @@ static int ORIG_TERMIOS_set = 0;
 static struct termios ORIG_TERMIOS;
 
 void resetTerminalMode(void) {
-  printf("\x1b[?1049l"); // switch back from alternate screen.
   if (ORIG_TERMIOS_set)
     tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
+  printf("\x1b[?1049l"); // switch back from alternate screen.
 }
 
 int _setTerminalRawMode(void) {
-  if (tcgetattr(0, &ORIG_TERMIOS) != 0) {
+  if (tcgetattr(fileno(stdin), &ORIG_TERMIOS) != 0) {
     fprintf(stderr, "Failed to backup termios: %s\n", strerror(errno));
     return 1;
   }
