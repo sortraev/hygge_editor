@@ -116,8 +116,8 @@ int sbInsertChar(StringBuffer *sb, size_t i, char c) {
 
   // insert the new byte
   sb->s[i] = c;
-
   sb->len++;
+
   return 0;
 }
 
@@ -135,13 +135,17 @@ int sbDeleteChar(StringBuffer *sb, size_t i) {
   sb->len--;
 
   // TODO: shrink sb? might be a bit expensive to do for every char deletion.
-  // sbShrink(sb);
+  if (sb->len * EXPANSION_RATE < sb->cap)
+    sbShrink(sb);
 
   return 0;
 }
 
 // split a StringBuffer in two, placing the result in tail.
 int sbSplit(StringBuffer *sb, StringBuffer *tail, size_t i) {
+  NOTNULL_(sb);
+  NOTNULL_(tail);
+
   if (i >= sb->len) {
     return 1;
   }
