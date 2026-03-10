@@ -21,7 +21,7 @@ char readKeyBlocking(void) {
   return c;
 }
 
-void debugPrint(State *state) {
+void drawStatusBar(State *state) {
   NOTNULL_(state);
 
   printf("\x1b[999;1H"); // move cursor to bottommost line
@@ -137,7 +137,7 @@ void refreshScreen(State *state) {
 
   drawEditorRows(state);
 
-  debugPrint(state);
+  drawStatusBar(state);
 
   printf("\x1b[%ld;%ldH", state->cursor.y + 1, state->cursor.x + 1); // move cursor to buffer position
 }
