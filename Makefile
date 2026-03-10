@@ -7,7 +7,7 @@ run: $(main)
 	./$<
 
 debug: $(main)
-	gdb -p $(shell pgrep $(main))
+	sudo gdb -p $(shell pgrep $(main))
 
 compile: $(main)
 
@@ -15,7 +15,7 @@ vg: $(main)
 	valgrind ./$(main)
 
 $(main): $(src)
-	gcc -Wall -Wextra -pedantic $< -g3 -o $@
+	gcc -Wall -Wextra -pedantic $< -ggdb -o $@
 
 clean:
 	rm -f $(main) vgcore*
