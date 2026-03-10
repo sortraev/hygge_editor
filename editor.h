@@ -27,8 +27,10 @@ void drawStatusBar(State *state) {
   printf("\x1b[999;1H"); // move cursor to bottommost line
   printf("\x1b[K");      // clear line
 
-  char *filename = state->filename ? state->filename : "[No filename]";
-  printf("%s | %lu:%lu | last key: ", filename, state->cursor.y + 1, state->cursor.x + 1);
+  printf("%s | %lu:%lu | last key: ",
+      state->filename ? state->filename : "[No filename]",
+      state->cursor.y + 1,
+      state->cursor.x + 1);
 
   printf(isprint(state->lastKey) ? "'%c'" : "%d", state->lastKey);
 }
@@ -66,8 +68,9 @@ void processCursorMovementKey(State *state, int c) {
 
 void insertNewline(State *state) {
   NOTNULL_(state);
+
   // insert a newline by first inserting an empty line, then splitting
-  // the current line onto the new line.
+  // the current line, placing the tail end onto the new line.
   linesInsertEmpty(&state->lines, state->cursor.y + 1);
   sbSplit(state->lines.lineBufs + state->cursor.y,
           state->lines.lineBufs + state->cursor.y + 1,
