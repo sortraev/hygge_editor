@@ -89,13 +89,15 @@ void processKey(State *state, char c) {
   NOTNULL_(state);
 
   state->lastKey = c;
-  if (c == '\n')
-    insertNewline(state);
 
-  else if (isprint(c))
+  if (isprint(c))
     insertChar(state, c);
 
   else switch (c) {
+
+    case '\n':
+      insertNewline(state);
+      break;
 
     case '\x1b':
     case CTRL_KEY('q'):
