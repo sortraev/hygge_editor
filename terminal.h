@@ -14,11 +14,13 @@
 #include "dims.h"
 #include "assert.h"
 
-struct termios ORIG_TERMIOS;
+static int ORIG_TERMIOS_set = 0;
+static struct termios ORIG_TERMIOS;
 
 void resetTerminalMode(void) {
   printf("\x1b[?1049l"); // switch back from alternate screen.
-  tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
+  if (ORIG_TERMIOS_set)
+    tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
 }
 
 int _setTerminalRawMode(void) {
@@ -26,6 +28,7 @@ int _setTerminalRawMode(void) {
     fprintf(stderr, "Failed to backup termios: %s\n", strerror(errno));
     return 1;
   }
+  ORIG_TERMIOS_set = 1;
 
   if (atexit(resetTerminalMode) != 0) {
     fprintf(stderr, "Failed to set terminal mode exit handler: %s\n", strerror(errno));
