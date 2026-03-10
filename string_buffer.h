@@ -146,7 +146,7 @@ int sbSplit(StringBuffer *sb, StringBuffer *tail, size_t i) {
   NOTNULL_(sb);
   NOTNULL_(tail);
 
-  if (i >= sb->len) {
+  if (i > sb->len) {
     return 1;
   }
 
