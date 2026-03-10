@@ -5,7 +5,7 @@
 
 #include "state.h"
 
-#define KEY_ESCAPE 27
+#define STATUS_BAR_HEIGHT 1
 
 #define CTRL_KEY(key) ((key) & 0x1f)
 
@@ -20,7 +20,6 @@ char readKeyBlocking(void) {
 
   return c;
 }
-
 
 void debugPrint(State *state) {
   NOTNULL_(state);
@@ -103,10 +102,15 @@ void processKey(State *state, char c) {
 void drawEditorRows(State *state) {
   NOTNULL_(state);
 
-  for (size_t i = 0; i < state->windowDims.y - 1; i++)
+  size_t lineOffset = 0; // TODO
+
+  size_t editorHeight = state->windowDims.y - STATUS_BAR_HEIGHT;
+
+  size_t i = 0;
+  for (; i < MIN(editorHeight, state->lines.numLines); i++)
+    printf("%s\n", state->lines.lineBufs[i].s);
+  for (; i < editorHeight; i++)
     printf("~\n");
-  if (state->windowDims.y > 0)
-    printf("~");
 }
 
 void refreshScreen(State *state) {
