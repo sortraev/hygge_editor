@@ -2,8 +2,8 @@
 #define DIMS_H
 
 typedef struct {
-  int y;
-  int x;
+  size_t y;
+  size_t x;
 } Dims;
 
 #endif // DIMS_H

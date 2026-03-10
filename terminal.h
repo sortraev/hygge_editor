@@ -61,8 +61,8 @@ int getWindowDims(Dims *dims) {
   struct winsize _winsize;
   if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;
-  dims->y = _winsize.ws_row;
-  dims->x = _winsize.ws_col;
+  dims->y = (size_t) _winsize.ws_row;
+  dims->x = (size_t) _winsize.ws_col;
   return 0;
 }
 

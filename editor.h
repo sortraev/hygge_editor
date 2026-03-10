@@ -32,7 +32,7 @@ void debugPrint(State *state) {
     printf("Last key: '%c'", state->lastKey);
   else
     printf("Last key: %d", state->lastKey);
-  printf(", cursor (y, x) = (%d, %d)", state->cursor.y, state->cursor.x);
+  printf(", cursor (y, x) = (%ld, %ld)", state->cursor.y, state->cursor.x);
 }
 
 void processCursorMovementKey(State *state, int c) {
@@ -79,7 +79,7 @@ void processKey(State *state, char c) {
 void drawEditorRows(State *state) {
   NOTNULL_(state);
 
-  for (int i = 0; i < state->windowDims.y - 1; i++)
+  for (size_t i = 0; i < state->windowDims.y - 1; i++)
     printf("~\n");
   if (state->windowDims.y > 0)
     printf("~");
@@ -95,7 +95,7 @@ void refreshScreen(State *state) {
 
   debugPrint(state);
 
-  printf("\x1b[%d;%dH", state->cursor.y + 1, state->cursor.x + 1); // move cursor to buffer position
+  printf("\x1b[%ld;%ldH", state->cursor.y + 1, state->cursor.x + 1); // move cursor to buffer position
 }
 
 #endif // EDITOR_H
