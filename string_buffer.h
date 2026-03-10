@@ -134,7 +134,28 @@ int sbDeleteChar(StringBuffer *sb, size_t i) {
   memmove(dst, dst + 1, sb->len - i);
   sb->len--;
 
-  // TODO: shrink buffer if necessary.
+  // TODO: shrink sb? might be a bit expensive to do for every char deletion.
+  // sbShrink(sb);
+
+  return 0;
+}
+
+// split a StringBuffer in two, placing the result in tail.
+int sbSplit(StringBuffer *sb, StringBuffer *tail, size_t i) {
+  if (i >= sb->len) {
+    return 1;
+  }
+
+  int insertStatus = sbInsertString(tail, 0, sb->s + i);
+  if (insertStatus != 0) {
+    return insertStatus;
+  }
+
+  memset(sb->s + i, 0, sb->len - i);
+  sb->len = i;
+
+  // TODO: what to do if this one fails..?
+  sbShrink(sb);
 
   return 0;
 }

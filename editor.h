@@ -67,11 +67,15 @@ void processCursorMovementKey(State *state, int c) {
 }
 
 void insertNewline(State *state) {
-  // TODO: handle splitting of line here
   NOTNULL_(state);
+  // insert a newline by first inserting an empty line, then splitting
+  // the current line onto the new line.
+  linesInsertEmpty(&state->lines, state->cursor.y + 1);
+  sbSplit(state->lines.lineBufs + state->cursor.y,
+          state->lines.lineBufs + state->cursor.y + 1,
+          state->cursor.x);
   state->cursor.y++;
   state->cursor.x = 0;
-  linesInsertEmpty(&state->lines, state->cursor.y);
 }
 
 void insertChar(State *state, char c) {
