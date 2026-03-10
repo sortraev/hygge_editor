@@ -12,10 +12,10 @@ debug: $(main)
 compile: $(main)
 
 vg: $(main)
-	valgrind ./$(main)
+	valgrind --log-file=valgrind.log --leak-check=full ./$(main)
 
 $(main): $(src)
 	gcc -Wall -Wextra -pedantic $< -ggdb -o $@
 
 clean:
-	rm -f $(main) vgcore*
+	rm -f $(main) vgcore* valgrind.log
