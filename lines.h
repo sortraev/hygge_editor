@@ -125,11 +125,4 @@ void linesFree(Lines *lines) {
   }
 }
 
-char *linesGetLine(Lines *lines, size_t i) {
-  if (i >= lines->numLines) {
-    return NULL;
-  }
-  return lines->lineBufs[i].s;
-}
-
 #endif // LINES_H

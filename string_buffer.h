@@ -121,17 +121,6 @@ int sbInsertChar(StringBuffer *sb, size_t i, char c) {
   return 0;
 }
 
-int sbAppendString(StringBuffer *sb, char *s) {
-  NOTNULL_(sb);
-  NOTNULL_(s);
-  return sbInsertString(sb, sb->len, s);
-}
-
-int sbAppendChar(StringBuffer *sb, char c) {
-  NOTNULL_(sb);
-  return sbInsertChar(sb, sb->len, c);
-}
-
 int sbDeleteChar(StringBuffer *sb, size_t i) {
   NOTNULL_(sb);
 
