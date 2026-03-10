@@ -55,7 +55,7 @@ void processCursorMovementKey(State *state, int c) {
         state->cursor.y < state->lines.numLines
           ? state->lines.lineBufs + state->cursor.y
           : NULL;
-      if (line && state->cursor.x + 1 < line->len)
+      if (line && state->cursor.x + 1 <= line->len)
         state->cursor.x++;
       break;
   }
