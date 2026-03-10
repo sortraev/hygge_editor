@@ -27,12 +27,10 @@ void drawStatusBar(State *state) {
   printf("\x1b[999;1H"); // move cursor to bottommost line
   printf("\x1b[K");      // clear line
 
-  if (isprint(state->lastKey))
-    printf("Last key: '%c'", state->lastKey);
-  else
-    printf("Last key: %d", state->lastKey);
-  printf(", cursor (y, x) = (%lu, %lu)", state->cursor.y, state->cursor.x);
-  printf(", numLines = %lu", state->lines.numLines);
+  char *filename = state->filename ? state->filename : "[No filename]";
+  printf("%s | %lu:%lu | last key: ", filename, state->cursor.y + 1, state->cursor.x + 1);
+
+  printf(isprint(state->lastKey) ? "'%c'" : "%d", state->lastKey);
 }
 
 void processCursorMovementKey(State *state, int c) {
