@@ -37,6 +37,7 @@ void debugPrint(State *state) {
 void processCursorMovementKey(State *state, int c) {
   NOTNULL_(state);
 
+  // TODO: revisit this logic once zero-line files are supported.
   switch (c) {
     case CTRL_KEY('w'): // up
       if (state->cursor.y > 0)
@@ -44,7 +45,8 @@ void processCursorMovementKey(State *state, int c) {
       break;
 
     case CTRL_KEY('s'): // down
-      state->cursor.y++;
+      if (state->cursor.y + 1 < state->lines.numLines)
+        state->cursor.y++;
       break;
 
     case CTRL_KEY('a'): // left
@@ -56,9 +58,10 @@ void processCursorMovementKey(State *state, int c) {
       state->cursor.x++;
       break;
   }
-
-  state->cursor.y = MIN(state->cursor.y, state->lines.numLines);
-  size_t currentLineLen = state->lines.lineBufs[state->cursor.y].len;
+  size_t currentLineLen =
+    state->cursor.y < state->lines.numLines
+      ? state->lines.lineBufs[state->cursor.y].len
+      : 0;
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
 }
 
