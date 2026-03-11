@@ -103,6 +103,46 @@ int main(void) {
     sbFree(&sb);
   }
 
+  // sbAppendString
+  {
+    StringBuffer sb = sbEmpty();
+
+    ASSERT_(sbAppendString(&sb, "foo") == 0);
+    ASSERT_(strcmp(sb.s, "foo") == 0);
+
+    ASSERT_(sbAppendString(&sb, "bar") == 0);
+    ASSERT_(strcmp(sb.s, "foobar") == 0);
+
+    sbFree(&sb);
+  }
+
+  // sbAppendChar
+  {
+    StringBuffer sb = sbEmpty();
+
+    ASSERT_(sbAppendChar(&sb, '$') == 0);
+    ASSERT_(strcmp(sb.s, "$") == 0);
+    ASSERT_(sbAppendChar(&sb, '@') == 0);
+    ASSERT_(strcmp(sb.s, "$@") == 0);
+
+    sbFree(&sb);
+  }
+
+  // interleaved sbAppendString and sbAppendChar
+  {
+    StringBuffer sb = sbEmpty();
+
+    ASSERT_(sbAppendString(&sb, "foo") == 0);
+    ASSERT_(sbAppendChar(&sb, '$') == 0);
+    ASSERT_(sbAppendChar(&sb, '@') == 0);
+    ASSERT_(sbAppendChar(&sb, '*') == 0);
+    ASSERT_(sbAppendString(&sb, "bar") == 0);
+
+    ASSERT_(strcmp(sb.s, "foo$@*bar") == 0);
+    sbFree(&sb);
+  }
+
+
   // sbShrink
   {
     StringBuffer sb = sbEmpty();
