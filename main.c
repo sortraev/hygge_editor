@@ -1,10 +1,8 @@
 #include <stdio.h> // fprintf, printf, fread, fopen, fclose
 
-#include <ctype.h> // iscntrl
-
-#include "editor.h"
 #include "terminal.h"
 #include "editor_state.h"
+#include "editor.h"
 #include "screen.h"
 
 int main(int argc, char **argv) {
@@ -19,7 +17,7 @@ int main(int argc, char **argv) {
   state->running = 1;
 
   while (state->running) {
-    refreshScreen(state);
+    screenDrawEditorState(state);
     char c = readKeyBlocking();
     processKey(state, c);
   }

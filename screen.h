@@ -56,7 +56,7 @@ void _renderStatusBar(EditorState *state, StringBuffer *screenBuf) {
   sbAppendString(screenBuf, cursorMovementBuf);
 }
 
-void refreshScreen(EditorState *state) {
+void screenDrawEditorState(EditorState *state) {
   NOTNULL_(state);
 
   StringBuffer screenBuf = sbEmpty();
