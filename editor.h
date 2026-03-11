@@ -21,20 +21,6 @@ char readKeyBlocking(void) {
   return c;
 }
 
-void drawStatusBar(State *state) {
-  NOTNULL_(state);
-
-  printf("\x1b[999;1H"); // move cursor to bottommost line
-  printf("\x1b[K");      // clear line
-
-  printf("%s | %lu:%lu | last key: ",
-      state->filename ? state->filename : "[No filename]",
-      state->cursor.y + 1,
-      state->cursor.x + 1);
-
-  printf(isprint(state->lastKey) ? "'%c'" : "%d", state->lastKey);
-}
-
 void processCursorMovementKey(State *state, int c) {
   NOTNULL_(state);
 
@@ -122,31 +108,67 @@ void processKey(State *state, char c) {
   }
 }
 
-void drawEditorRows(State *state) {
+void renderEditorWindow(State *state, StringBuffer *out) {
   NOTNULL_(state);
-
-  size_t lineOffset = 0; // TODO
+  NOTNULL_(out);
 
   size_t editorHeight = state->windowDims.y - STATUS_BAR_HEIGHT;
 
   size_t i = 0;
-  for (; i < MIN(editorHeight, state->lines.numLines); i++)
-    printf("%s\n", state->lines.lineBufs[i].s);
+  for (; i < MIN(editorHeight, state->lines.numLines); i++) {
+    sbAppendString(out, state->lines.lineBufs[i].s);
+    sbAppendChar(out, '\n');
+  }
   for (; i < editorHeight; i++)
-    printf("~\n");
+    sbAppendString(out, "~\n");
+}
+
+void renderStatusBar(State *state, StringBuffer *out) {
+  NOTNULL_(state);
+  NOTNULL_(out);
+
+  // move cursor to bottom line and clear line
+  sbAppendString(out, "\x1b[999;1H\x1b[K");
+
+  char statusBarBuf[256];
+  int n = snprintf(
+      statusBarBuf,
+      sizeof(statusBarBuf),
+      "%s | %lu:%lu | last key: ",
+      state->filename ? state->filename : "[No filename]",
+      state->cursor.y + 1,
+      state->cursor.x + 1);
+  snprintf(
+      statusBarBuf + n,
+      sizeof(statusBarBuf) - n,
+      isprint(state->lastKey) ? "'%c'" : "%d",
+      state->lastKey);
+  sbAppendString(out, statusBarBuf);
+
+  char cursorMovementBuf[12];
+  snprintf(
+      cursorMovementBuf,
+      sizeof(cursorMovementBuf),
+      "\x1b[%ld;%ldH",
+      state->cursor.y + 1,
+      state->cursor.x + 1);
+  sbAppendString(out, cursorMovementBuf);
 }
 
 void refreshScreen(State *state) {
   NOTNULL_(state);
 
-  printf("\x1b[2J"); // clear screen
-  printf("\x1b[H");  // move cursor to top left
+  StringBuffer sb = sbEmpty();
+  sbInitWithCapacity(&sb, 4096);
 
-  drawEditorRows(state);
+  sbAppendString(&sb, "\x1b[2J\x1b[H"); // move cursor to top position
 
-  drawStatusBar(state);
+  renderEditorWindow(state, &sb);
 
-  printf("\x1b[%ld;%ldH", state->cursor.y + 1, state->cursor.x + 1); // move cursor to buffer position
+  renderStatusBar(state, &sb);
+
+  fwrite(sb.s, sizeof(char), sb.len, stdout);
+  sbFree(&sb);
 }
 
 #endif // EDITOR_H
