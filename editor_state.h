@@ -11,15 +11,14 @@
 typedef struct {
   int running;
 
-  char *filename;
-
   StringBuffer *lines;
   size_t numLines;
   size_t lineCap;
 
   Dims cursor;
-
   Dims windowDims;
+
+  char *filename;
 
   int lastKey;
 
@@ -141,14 +140,12 @@ EditorState *stateInit(void) {
     return NULL;
   }
 
-  state->lastKey = -1;
-
-  // state->lines = linesEmpty();
-
   // TODO: placeholder. should insert better handling of empty files.
   linesAppendEmpty(state);
 
   getWindowDims(&state->windowDims);
+
+  state->lastKey = -1;
 
   return state;
 }
