@@ -1,5 +1,5 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef EDITOR_STATE_H
+#define EDITOR_STATE_H
 
 #include <stdlib.h>
 
@@ -148,4 +148,4 @@ EditorState *stateInit(void) {
   return state;
 }
 
-#endif // STATE_H
+#endif // EDITOR_STATE_H
