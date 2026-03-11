@@ -12,7 +12,7 @@
 #include <signal.h>
 
 #include "dims.h"
-#include "assert.h"
+#include "util.h"
 
 static int ORIG_TERMIOS_set = 0;
 static struct termios ORIG_TERMIOS;

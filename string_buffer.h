@@ -2,7 +2,7 @@
 #define STRING_BUFFER_H
 
 #include <string.h>
-#include "assert.h"
+#include "util.h"
 
 typedef struct {
   char *s;

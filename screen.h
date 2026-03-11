@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "assert.h"
+#include "util.h"
 #include "editor_state.h"
 #include "string_buffer.h"
 
