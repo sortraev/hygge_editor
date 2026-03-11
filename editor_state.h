@@ -6,7 +6,6 @@
 #include "util.h"
 #include "dims.h"
 #include "terminal.h"
-// #include "lines.h"
 #include "string_buffer.h"
 
 typedef struct {
@@ -24,9 +23,9 @@ typedef struct {
 
   int lastKey;
 
-} State;
+} EditorState;
 
-int linesResize(State *state, size_t newCap) {
+int linesResize(EditorState *state, size_t newCap) {
   NOTNULL_(state);
   ASSERT(newCap >= state->cap, "linesResize(): downsizing not yet supported");
 
@@ -49,7 +48,7 @@ int linesResize(State *state, size_t newCap) {
   return 0;
 }
 
-int _linesInsertStringBuffer(State *state, size_t i, StringBuffer lineBuf) {
+int _linesInsertStringBuffer(EditorState *state, size_t i, StringBuffer lineBuf) {
   NOTNULL_(state);
 
   if (i > state->numLines) {
@@ -75,7 +74,7 @@ int _linesInsertStringBuffer(State *state, size_t i, StringBuffer lineBuf) {
   return 0;
 }
 
-int linesInsertEmpty(State *state, size_t i) {
+int linesInsertEmpty(EditorState *state, size_t i) {
   NOTNULL_(state);
 
   StringBuffer sb = sbEmpty();
@@ -85,12 +84,12 @@ int linesInsertEmpty(State *state, size_t i) {
   return _linesInsertStringBuffer(state, i, sb);
 }
 
-int linesAppendEmpty(State *state) {
+int linesAppendEmpty(EditorState *state) {
   NOTNULL_(state);
   return linesInsertEmpty(state, state->numLines);
 }
 
-int linesInsertString(State *state, size_t line, size_t col, char *s) {
+int linesInsertString(EditorState *state, size_t line, size_t col, char *s) {
   NOTNULL_(state);
   NOTNULL_(s);
 
@@ -102,7 +101,7 @@ int linesInsertString(State *state, size_t line, size_t col, char *s) {
   return sbInsertString(lineBuf, col, s);
 }
 
-int linesInsertChar(State *state, size_t line, size_t col, char c) {
+int linesInsertChar(EditorState *state, size_t line, size_t col, char c) {
   NOTNULL_(state);
 
   if (line >= state->numLines) {
@@ -113,7 +112,7 @@ int linesInsertChar(State *state, size_t line, size_t col, char c) {
   return sbInsertChar(lineBuf, col, c);
 }
 
-int linesDeleteChar(State *state, size_t line, size_t col) {
+int linesDeleteChar(EditorState *state, size_t line, size_t col) {
   NOTNULL_(state);
 
   if (line >= state->numLines) {
@@ -124,7 +123,7 @@ int linesDeleteChar(State *state, size_t line, size_t col) {
   return sbDeleteChar(lineBuf, col);
 }
 
-void stateFree(State *state) {
+void stateFree(EditorState *state) {
   if (state) {
     for (size_t i = 0; i < state->numLines; i++) {
       sbFree(state->lines + i);
@@ -135,8 +134,8 @@ void stateFree(State *state) {
 
 
 
-State *stateInit(void) {
-  State *state = calloc(1, sizeof(State));
+EditorState *stateInit(void) {
+  EditorState *state = calloc(1, sizeof(EditorState));
 
   if (!state) {
     return NULL;

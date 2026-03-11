@@ -21,7 +21,7 @@ char readKeyBlocking(void) {
   return c;
 }
 
-void processCursorMovementKey(State *state, int c) {
+void processCursorMovementKey(EditorState *state, int c) {
   NOTNULL_(state);
 
   // TODO: revisit this logic once zero-line files are supported.
@@ -52,7 +52,7 @@ void processCursorMovementKey(State *state, int c) {
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
 }
 
-void insertNewline(State *state) {
+void insertNewline(EditorState *state) {
   NOTNULL_(state);
 
   // insert a newline by first inserting an empty line, then splitting
@@ -65,18 +65,18 @@ void insertNewline(State *state) {
   state->cursor.x = 0;
 }
 
-void insertChar(State *state, char c) {
+void insertChar(EditorState *state, char c) {
   NOTNULL_(state);
   linesInsertChar(state, state->cursor.y, state->cursor.x, c);
   state->cursor.x++;
 }
 
-void deleteChar(State *state) {
+void deleteChar(EditorState *state) {
   NOTNULL_(state);
   linesDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
-void processKey(State *state, char c) {
+void processKey(EditorState *state, char c) {
   NOTNULL_(state);
 
   state->lastKey = c;
@@ -108,7 +108,7 @@ void processKey(State *state, char c) {
   }
 }
 
-void renderEditorWindow(State *state, StringBuffer *out) {
+void renderEditorWindow(EditorState *state, StringBuffer *out) {
   NOTNULL_(state);
   NOTNULL_(out);
 
@@ -123,7 +123,7 @@ void renderEditorWindow(State *state, StringBuffer *out) {
     sbAppendString(out, "~\n");
 }
 
-void renderStatusBar(State *state, StringBuffer *out) {
+void renderStatusBar(EditorState *state, StringBuffer *out) {
   NOTNULL_(state);
   NOTNULL_(out);
 
@@ -155,7 +155,7 @@ void renderStatusBar(State *state, StringBuffer *out) {
   sbAppendString(out, cursorMovementBuf);
 }
 
-void refreshScreen(State *state) {
+void refreshScreen(EditorState *state) {
   NOTNULL_(state);
 
   StringBuffer sb = sbEmpty();

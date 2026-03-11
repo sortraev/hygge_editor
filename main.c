@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  State *state = stateInit();
+  EditorState *state = stateInit();
   state->filename = argc >= 2 ? argv[1] : NULL;
   state->running = 1;
 
