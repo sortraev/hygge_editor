@@ -24,13 +24,13 @@ typedef struct {
 
 } EditorState;
 
-int linesResize(EditorState *state, size_t newCap) {
+int _stateResizeLines(EditorState *state, size_t newCap) {
   NOTNULL_(state);
-  ASSERT(newCap >= state->lineCap, "linesResize(): downsizing not yet supported");
+  ASSERT(newCap >= state->lineCap, "stateResizeLines(): downsizing not yet supported");
 
   StringBuffer *tmp = realloc(state->lines, newCap * sizeof(StringBuffer));
   if (!tmp) {
-    fprintf(stderr, "linesResize(): Failed to reallocate lineBufs\n");
+    fprintf(stderr, "_stateResizeLines(): Failed to reallocate lineBufs\n");
     return 1;
   }
 
@@ -47,7 +47,7 @@ int linesResize(EditorState *state, size_t newCap) {
   return 0;
 }
 
-int _linesInsertStringBuffer(EditorState *state, size_t i, StringBuffer lineBuf) {
+int _stateInsertLine(EditorState *state, size_t i, StringBuffer lineBuf) {
   NOTNULL_(state);
 
   if (i > state->numLines) {
@@ -56,7 +56,7 @@ int _linesInsertStringBuffer(EditorState *state, size_t i, StringBuffer lineBuf)
 
   // expand if necessary
   if (state->numLines + 1 > state->lineCap) {
-    int resizeStatus = linesResize(state, state->numLines + 1);
+    int resizeStatus = _stateResizeLines(state, state->numLines + 1);
     if (resizeStatus != 0)
       return resizeStatus;
   }
@@ -73,22 +73,22 @@ int _linesInsertStringBuffer(EditorState *state, size_t i, StringBuffer lineBuf)
   return 0;
 }
 
-int linesInsertEmpty(EditorState *state, size_t i) {
+int stateInsertEmptyLine(EditorState *state, size_t i) {
   NOTNULL_(state);
 
   StringBuffer sb = sbEmpty();
   if (sbInitWithCapacity(&sb, 16) != 0) {
     return 1;
   }
-  return _linesInsertStringBuffer(state, i, sb);
+  return _stateInsertLine(state, i, sb);
 }
 
-int linesAppendEmpty(EditorState *state) {
+int stateAppendEmptyLine(EditorState *state) {
   NOTNULL_(state);
-  return linesInsertEmpty(state, state->numLines);
+  return stateInsertEmptyLine(state, state->numLines);
 }
 
-int linesInsertString(EditorState *state, size_t line, size_t col, char *s) {
+int stateInsertString(EditorState *state, size_t line, size_t col, char *s) {
   NOTNULL_(state);
   NOTNULL_(s);
 
@@ -100,7 +100,7 @@ int linesInsertString(EditorState *state, size_t line, size_t col, char *s) {
   return sbInsertString(lineBuf, col, s);
 }
 
-int linesInsertChar(EditorState *state, size_t line, size_t col, char c) {
+int stateInsertChar(EditorState *state, size_t line, size_t col, char c) {
   NOTNULL_(state);
 
   if (line >= state->numLines) {
@@ -111,7 +111,7 @@ int linesInsertChar(EditorState *state, size_t line, size_t col, char c) {
   return sbInsertChar(lineBuf, col, c);
 }
 
-int linesDeleteChar(EditorState *state, size_t line, size_t col) {
+int stateDeleteChar(EditorState *state, size_t line, size_t col) {
   NOTNULL_(state);
 
   if (line >= state->numLines) {
@@ -131,8 +131,6 @@ void stateFree(EditorState *state) {
   }
 }
 
-
-
 EditorState *stateInit(void) {
   EditorState *state = calloc(1, sizeof(EditorState));
 
@@ -141,7 +139,7 @@ EditorState *stateInit(void) {
   }
 
   // TODO: placeholder. should insert better handling of empty files.
-  linesAppendEmpty(state);
+  stateAppendEmptyLine(state);
 
   getWindowDims(&state->windowDims);
 

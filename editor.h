@@ -52,12 +52,12 @@ void processCursorMovementKey(EditorState *state, int c) {
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
 }
 
-void insertNewline(EditorState *state) {
+void editorInsertNewline(EditorState *state) {
   NOTNULL_(state);
 
   // insert a newline by first inserting an empty line, then splitting
   // the current line, placing the tail end onto the new line.
-  linesInsertEmpty(state, state->cursor.y + 1);
+  stateInsertEmptyLine(state, state->cursor.y + 1);
   sbSplit(state->lines + state->cursor.y,
           state->lines + state->cursor.y + 1,
           state->cursor.x);
@@ -65,15 +65,15 @@ void insertNewline(EditorState *state) {
   state->cursor.x = 0;
 }
 
-void insertChar(EditorState *state, char c) {
+void editorInsertChar(EditorState *state, char c) {
   NOTNULL_(state);
-  linesInsertChar(state, state->cursor.y, state->cursor.x, c);
+  stateInsertChar(state, state->cursor.y, state->cursor.x, c);
   state->cursor.x++;
 }
 
-void deleteChar(EditorState *state) {
+void editorDeleteChar(EditorState *state) {
   NOTNULL_(state);
-  linesDeleteChar(state, state->cursor.y, state->cursor.x);
+  stateDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
 void processKey(EditorState *state, char c) {
@@ -82,12 +82,12 @@ void processKey(EditorState *state, char c) {
   state->lastKey = c;
 
   if (isprint(c))
-    insertChar(state, c);
+    editorInsertChar(state, c);
 
   else switch (c) {
 
     case '\n':
-      insertNewline(state);
+      editorInsertNewline(state);
       break;
 
     case '\x1b':
@@ -96,7 +96,7 @@ void processKey(EditorState *state, char c) {
       break;
 
     case CTRL_KEY('x'):
-      deleteChar(state);
+      editorDeleteChar(state);
       break;
 
     case CTRL_KEY('w'):
