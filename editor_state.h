@@ -10,7 +10,6 @@
 typedef struct {
   int running;
 
-  FILE *f;
   char *filename;
 
   Lines lines;
