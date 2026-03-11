@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "string_buffer.h"
-#include "assert.h"
+#include "util.h"
 
 int main(void) {
 
