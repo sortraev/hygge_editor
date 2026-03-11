@@ -8,6 +8,7 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
+#ifdef DEBUG
 static void _assert(int cond, const char *fmt, ...) {
   if (!cond) {
     va_list args;
@@ -17,11 +18,13 @@ static void _assert(int cond, const char *fmt, ...) {
     exit(1);
   }
 }
-
 #define ASSERT(cond, msg) \
   do {\
       _assert((cond), "Assertion failed: %s (%s:%d)\n", (msg), __FILE__, __LINE__);\
   } while (0)
+#else
+#define ASSERT(cond, msg)
+#endif
 
 #define NOTNULL(expr, msg) ASSERT((void*)(expr) != NULL, msg)
 

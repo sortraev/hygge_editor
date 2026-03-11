@@ -15,7 +15,7 @@ vg: $(main)
 	valgrind --log-file=valgrind.log --leak-check=full ./$(main)
 
 $(main): $(src)
-	gcc -Wall -Wextra -pedantic $< -ggdb -o $@
+	gcc -DDEBUG -Wall -Wextra -pedantic $< -ggdb -o $@
 
 clean:
 	rm -f $(main) vgcore* valgrind.log
