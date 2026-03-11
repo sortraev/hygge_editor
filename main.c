@@ -5,6 +5,7 @@
 #include "editor.h"
 #include "terminal.h"
 #include "editor_state.h"
+#include "screen.h"
 
 int main(int argc, char **argv) {
 
