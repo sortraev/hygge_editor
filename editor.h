@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "state.h"
+#include "editor_state.h"
 
 #define STATUS_BAR_HEIGHT 1
 

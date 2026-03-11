@@ -1,5 +1,5 @@
 main=my_editor
-src=main.c editor.h terminal.h state.h string_buffer.h util.h lines.h
+src=main.c editor.h terminal.h editor_state.h string_buffer.h util.h lines.h
 
 .PHONY: $(src) clean
 

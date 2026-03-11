@@ -4,7 +4,7 @@
 
 #include "editor.h"
 #include "terminal.h"
-#include "state.h"
+#include "editor_state.h"
 
 int main(int argc, char **argv) {
 
