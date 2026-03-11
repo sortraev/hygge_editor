@@ -15,7 +15,7 @@ typedef struct {
 
   StringBuffer *lines;
   size_t numLines;
-  size_t cap;
+  size_t lineCap;
 
   Dims cursor;
 
@@ -27,7 +27,7 @@ typedef struct {
 
 int linesResize(EditorState *state, size_t newCap) {
   NOTNULL_(state);
-  ASSERT(newCap >= state->cap, "linesResize(): downsizing not yet supported");
+  ASSERT(newCap >= state->lineCap, "linesResize(): downsizing not yet supported");
 
   StringBuffer *tmp = realloc(state->lines, newCap * sizeof(StringBuffer));
   if (!tmp) {
@@ -36,14 +36,14 @@ int linesResize(EditorState *state, size_t newCap) {
   }
 
   state->lines = tmp;
-  state->cap = newCap;
+  state->lineCap = newCap;
 
   if (state->numLines >= newCap)
     state->numLines = newCap;
 
   memset(state->lines + state->numLines,
          0,
-         (state->cap - state->numLines) * sizeof(StringBuffer));
+         (state->lineCap - state->numLines) * sizeof(StringBuffer));
 
   return 0;
 }
@@ -56,7 +56,7 @@ int _linesInsertStringBuffer(EditorState *state, size_t i, StringBuffer lineBuf)
   }
 
   // expand if necessary
-  if (state->numLines + 1 > state->cap) {
+  if (state->numLines + 1 > state->lineCap) {
     int resizeStatus = linesResize(state, state->numLines + 1);
     if (resizeStatus != 0)
       return resizeStatus;
