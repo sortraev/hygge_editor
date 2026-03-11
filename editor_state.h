@@ -138,9 +138,6 @@ EditorState *stateInit(void) {
     return NULL;
   }
 
-  // TODO: placeholder. should insert better handling of empty files.
-  stateAppendEmptyLine(state);
-
   getWindowDims(&state->windowDims);
 
   state->lastKey = -1;

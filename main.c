@@ -16,6 +16,9 @@ int main(int argc, char **argv) {
   state->filename = argc >= 2 ? argv[1] : NULL;
   state->running = 1;
 
+  // TODO: placeholder. should insert better handling of empty files.
+  stateAppendEmptyLine(state);
+
   while (state->running) {
     screenDrawEditorState(state);
     char c = readKeyBlocking();

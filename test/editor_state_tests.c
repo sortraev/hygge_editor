@@ -10,8 +10,9 @@ int main(void) {
   {
     EditorState *state = stateInit();
 
-    ASSERT_(state->lines != NULL);
-    ASSERT_(state->lineCap >= state->numLines);
+    ASSERT_(state->lines == NULL);
+    ASSERT_(state->numLines == 0);
+    ASSERT_(state->lineCap == 0);
 
     stateFree(state);
   }
