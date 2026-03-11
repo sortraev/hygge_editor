@@ -32,7 +32,7 @@ void processCursorMovementKey(State *state, int c) {
       break;
 
     case CTRL_KEY('s'): // down
-      if (state->cursor.y + 1 < state->lines.numLines)
+      if (state->cursor.y + 1 < state->numLines)
         state->cursor.y++;
       break;
 
@@ -46,8 +46,8 @@ void processCursorMovementKey(State *state, int c) {
       break;
   }
   size_t currentLineLen =
-    state->cursor.y < state->lines.numLines
-      ? state->lines.lineBufs[state->cursor.y].len
+    state->cursor.y < state->numLines
+      ? state->lines[state->cursor.y].len
       : 0;
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
 }
@@ -57,9 +57,9 @@ void insertNewline(State *state) {
 
   // insert a newline by first inserting an empty line, then splitting
   // the current line, placing the tail end onto the new line.
-  linesInsertEmpty(&state->lines, state->cursor.y + 1);
-  sbSplit(state->lines.lineBufs + state->cursor.y,
-          state->lines.lineBufs + state->cursor.y + 1,
+  linesInsertEmpty(state, state->cursor.y + 1);
+  sbSplit(state->lines + state->cursor.y,
+          state->lines + state->cursor.y + 1,
           state->cursor.x);
   state->cursor.y++;
   state->cursor.x = 0;
@@ -67,13 +67,13 @@ void insertNewline(State *state) {
 
 void insertChar(State *state, char c) {
   NOTNULL_(state);
-  linesInsertChar(&state->lines, state->cursor.y, state->cursor.x, c);
+  linesInsertChar(state, state->cursor.y, state->cursor.x, c);
   state->cursor.x++;
 }
 
 void deleteChar(State *state) {
   NOTNULL_(state);
-  linesDeleteChar(&state->lines, state->cursor.y, state->cursor.x);
+  linesDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
 void processKey(State *state, char c) {
@@ -115,8 +115,8 @@ void renderEditorWindow(State *state, StringBuffer *out) {
   size_t editorHeight = state->windowDims.y - STATUS_BAR_HEIGHT;
 
   size_t i = 0;
-  for (; i < MIN(editorHeight, state->lines.numLines); i++) {
-    sbAppendString(out, state->lines.lineBufs[i].s);
+  for (; i < MIN(editorHeight, state->numLines); i++) {
+    sbAppendString(out, state->lines[i].s);
     sbAppendChar(out, '\n');
   }
   for (; i < editorHeight; i++)
