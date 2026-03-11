@@ -1,5 +1,3 @@
-#include <stdio.h> // fprintf, printf, fread, fopen, fclose
-
 #include "terminal.h"
 #include "editor_state.h"
 #include "editor.h"
