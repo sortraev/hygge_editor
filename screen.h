@@ -71,4 +71,6 @@ void screenDrawEditorState(EditorState *state) {
   sbFree(&screenBuf);
 }
 
+#undef STATUS_BAR_HEIGHT
+
 #endif // SCREEN_H

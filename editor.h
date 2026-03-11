@@ -107,4 +107,6 @@ char editorReadKeyBlocking(void) {
   return c;
 }
 
+#undef CTRL_KEY
+
 #endif // EDITOR_H
