@@ -5,6 +5,7 @@
 #include <ctype.h> // isprint
 
 #include "editor_state.h"
+#include "io.h"
 
 #define CTRL_KEY(key) ((key) & 0x1f)
 
@@ -63,6 +64,18 @@ void _editorDeleteChar(EditorState *state) {
   stateDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
+void _editorDoSaveToFile(EditorState *state) {
+  NOTNULL_(state);
+
+  // TODO: update message bar (after implementing such a bar)
+  switch (ioSaveToFile(state)) {
+    case SUCCESS:
+      break;
+    default:
+      break;
+  }
+}
+
 void editorProcessKey(EditorState *state, char c) {
   NOTNULL_(state);
 
@@ -91,6 +104,10 @@ void editorProcessKey(EditorState *state, char c) {
     case CTRL_KEY('s'):
     case CTRL_KEY('d'):
       _editorProcessCursorMovementKey(state, c);
+      break;
+
+    case CTRL_KEY('f'):
+      _editorDoSaveToFile(state);
       break;
   }
 }
