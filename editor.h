@@ -2,24 +2,13 @@
 #define EDITOR_H
 
 #include <stdio.h>
+#include <ctype.h> // isprint
 
 #include "editor_state.h"
 
 #define CTRL_KEY(key) ((key) & 0x1f)
 
-char readKeyBlocking(void) {
-  char c;
-  int num_read;
-  while ((num_read = fread(&c, sizeof(char), 1, stdin)) != 1) {
-    // TODO: handle num_read < 0 and errno != EAGAIN
-  }
-
-  // TODO: handle escape sequences (requires adding a timeout on stdin reads)
-
-  return c;
-}
-
-void processCursorMovementKey(EditorState *state, int c) {
+void _editorProcessCursorMovementKey(EditorState *state, int c) {
   NOTNULL_(state);
 
   // TODO: revisit this logic once zero-line files are supported.
@@ -50,7 +39,7 @@ void processCursorMovementKey(EditorState *state, int c) {
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
 }
 
-void editorInsertNewline(EditorState *state) {
+void _editorInsertNewline(EditorState *state) {
   NOTNULL_(state);
 
   // insert a newline by first inserting an empty line, then splitting
@@ -63,29 +52,29 @@ void editorInsertNewline(EditorState *state) {
   state->cursor.x = 0;
 }
 
-void editorInsertChar(EditorState *state, char c) {
+void _editorInsertChar(EditorState *state, char c) {
   NOTNULL_(state);
   stateInsertChar(state, state->cursor.y, state->cursor.x, c);
   state->cursor.x++;
 }
 
-void editorDeleteChar(EditorState *state) {
+void _editorDeleteChar(EditorState *state) {
   NOTNULL_(state);
   stateDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
-void processKey(EditorState *state, char c) {
+void editorProcessKey(EditorState *state, char c) {
   NOTNULL_(state);
 
   state->lastKey = c;
 
   if (isprint(c))
-    editorInsertChar(state, c);
+    _editorInsertChar(state, c);
 
   else switch (c) {
 
     case '\n':
-      editorInsertNewline(state);
+      _editorInsertNewline(state);
       break;
 
     case '\x1b':
@@ -94,16 +83,28 @@ void processKey(EditorState *state, char c) {
       break;
 
     case CTRL_KEY('x'):
-      editorDeleteChar(state);
+      _editorDeleteChar(state);
       break;
 
     case CTRL_KEY('w'):
     case CTRL_KEY('a'):
     case CTRL_KEY('s'):
     case CTRL_KEY('d'):
-      processCursorMovementKey(state, c);
+      _editorProcessCursorMovementKey(state, c);
       break;
   }
+}
+
+char editorReadKeyBlocking(void) {
+  char c;
+  int num_read;
+  while ((num_read = fread(&c, sizeof(char), 1, stdin)) != 1) {
+    // TODO: handle num_read < 0 and errno != EAGAIN
+  }
+
+  // TODO: handle escape sequences (requires adding a timeout on stdin reads)
+
+  return c;
 }
 
 #endif // EDITOR_H

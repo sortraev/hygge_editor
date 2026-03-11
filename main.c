@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
 
   while (state->running) {
     screenDrawEditorState(state);
-    char c = readKeyBlocking();
-    processKey(state, c);
+    char c = editorReadKeyBlocking();
+    editorProcessKey(state, c);
   }
 
   resetTerminalMode();
