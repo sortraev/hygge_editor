@@ -5,8 +5,6 @@
 
 #include "editor_state.h"
 
-#define STATUS_BAR_HEIGHT 1
-
 #define CTRL_KEY(key) ((key) & 0x1f)
 
 char readKeyBlocking(void) {
@@ -106,69 +104,6 @@ void processKey(EditorState *state, char c) {
       processCursorMovementKey(state, c);
       break;
   }
-}
-
-void renderEditorWindow(EditorState *state, StringBuffer *out) {
-  NOTNULL_(state);
-  NOTNULL_(out);
-
-  size_t editorHeight = state->windowDims.y - STATUS_BAR_HEIGHT;
-
-  size_t i = 0;
-  for (; i < MIN(editorHeight, state->numLines); i++) {
-    sbAppendString(out, state->lines[i].s);
-    sbAppendChar(out, '\n');
-  }
-  for (; i < editorHeight; i++)
-    sbAppendString(out, "~\n");
-}
-
-void renderStatusBar(EditorState *state, StringBuffer *out) {
-  NOTNULL_(state);
-  NOTNULL_(out);
-
-  // move cursor to bottom line and clear line
-  sbAppendString(out, "\x1b[999;1H\x1b[K");
-
-  char statusBarBuf[256];
-  int n = snprintf(
-      statusBarBuf,
-      sizeof(statusBarBuf),
-      "%s | %lu:%lu | last key: ",
-      state->filename ? state->filename : "[No filename]",
-      state->cursor.y + 1,
-      state->cursor.x + 1);
-  snprintf(
-      statusBarBuf + n,
-      sizeof(statusBarBuf) - n,
-      isprint(state->lastKey) ? "'%c'" : "%d",
-      state->lastKey);
-  sbAppendString(out, statusBarBuf);
-
-  char cursorMovementBuf[12];
-  snprintf(
-      cursorMovementBuf,
-      sizeof(cursorMovementBuf),
-      "\x1b[%ld;%ldH",
-      state->cursor.y + 1,
-      state->cursor.x + 1);
-  sbAppendString(out, cursorMovementBuf);
-}
-
-void refreshScreen(EditorState *state) {
-  NOTNULL_(state);
-
-  StringBuffer sb = sbEmpty();
-  sbInitWithCapacity(&sb, 4096);
-
-  sbAppendString(&sb, "\x1b[2J\x1b[H"); // move cursor to top position
-
-  renderEditorWindow(state, &sb);
-
-  renderStatusBar(state, &sb);
-
-  fwrite(sb.s, sizeof(char), sb.len, stdout);
-  sbFree(&sb);
 }
 
 #endif // EDITOR_H
