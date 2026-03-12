@@ -9,10 +9,10 @@
 
 typedef enum {
   SUCCESS,
+  MISSING_FILENAME,
+  DIRTY,
   BAD_PERMISSIONS,
-  NO_FILENAME,
   IO_ERROR,
-  DIRTY
 } IOStatus;
 
 IOStatus ioSaveToFile(EditorState *state) {
@@ -21,7 +21,7 @@ IOStatus ioSaveToFile(EditorState *state) {
 
   char *filename = state->filename;
   if (!filename) {
-    return NO_FILENAME;
+    return MISSING_FILENAME;
   }
 
   FILE *f = fopen(filename, "w");
