@@ -1,9 +1,13 @@
-tests: string_buffer_tests editor_state_tests
+TEST_SRC = ${wildcard *.c}
+TEST_BINS = ${TEST_SRC:.c=}
 
-.PHONY: tests
+.PHONY: $(TEST_SRC)
+
+run_tests: $(TEST_BINS)
 
 %: %.c
-	gcc -DDEBUG -ggdb -I../src -o $@ $^ && ./$@
+	@gcc -DDEBUG -ggdb -I../src -o $@ $^ \
+		&& ./$@
 
 clean:
-	rm -rf vgcore* string_buffer_tests editor_state_tests
+	rm -rf vgcore* $(TEST_BINS)
