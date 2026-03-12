@@ -28,13 +28,7 @@ int _stateResizeLines(EditorState *state, size_t newCap) {
   NOTNULL_(state);
   ASSERT(newCap >= state->lineCap, "stateResizeLines(): downsizing not yet supported");
 
-  StringBuffer *tmp = realloc(state->lines, newCap * sizeof(StringBuffer));
-  if (!tmp) {
-    fprintf(stderr, "_stateResizeLines(): Failed to reallocate lineBufs\n");
-    return 1;
-  }
-
-  state->lines = tmp;
+  state->lines = reallocOrDie(state->lines, newCap * sizeof(StringBuffer));
   state->lineCap = newCap;
 
   if (state->numLines >= newCap)
@@ -132,11 +126,7 @@ void stateFree(EditorState *state) {
 }
 
 EditorState *stateInit(void) {
-  EditorState *state = calloc(1, sizeof(EditorState));
-
-  if (!state) {
-    return NULL;
-  }
+  EditorState *state = callocOrDie(1, sizeof(EditorState));
 
   getWindowDims(&state->windowDims);
 

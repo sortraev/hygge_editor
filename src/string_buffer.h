@@ -25,10 +25,7 @@ int sbInitWithCapacity(StringBuffer *sb, size_t initCap) {
 
   initCap = initCap >= MIN_INIT_CAP ? initCap : MIN_INIT_CAP;
 
-  sb->s = calloc(initCap, sizeof(char));
-  if (!sb->s && initCap > 0) {
-    return 1;
-  }
+  sb->s = callocOrDie(initCap, sizeof(char));
 
   sb->cap = initCap;
   sb->len = 0;
@@ -40,13 +37,7 @@ int sbResize(StringBuffer *sb, size_t newCap) {
   NOTNULL_(sb);
   newCap = newCap >= 1 ? newCap : 1;
 
-  char *tmp = realloc(sb->s, newCap * sizeof(char));
-  if (!tmp) {
-    fprintf(stderr, "sbResize(): failed to reallocate\n");
-    return 1;
-  }
-
-  sb->s = tmp;
+  sb->s = reallocOrDie(sb->s, newCap * sizeof(char));
   sb->cap = newCap;
 
   if (sb->len >= sb->cap)
