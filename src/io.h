@@ -19,7 +19,8 @@ IOStatus ioSaveToFile(char *filename, StringBuffer *lines, size_t numLines) {
 
   FILE *f = fopen(filename, "w");
   if (!f) {
-    fprintf(stderr, "ioSaveToFile: failed to open %s\n", strerror(errno));
+    fprintf(stderr, "ioSaveToFile: failed to open '%s': %s\n",
+        filename, strerror(errno));
     if (errno == EACCES)
       return BAD_PERMISSIONS;
     return IO_ERROR;
