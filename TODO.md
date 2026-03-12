@@ -17,10 +17,11 @@ Stuff I want to implement.
 
 * [ ] saving files
     - [x] IO functionality
-    - [ ] save dialogue when filename not specified
-* [ ] opening files
-    - [ ] IO functionality
-    - [ ] load file on startup if filename given and exists (fail on readonly)
+    - [ ] user response on file saved
+    - [ ] save dialogue when filename not already specified
+* [x] opening files
+    - [x] IO functionality
+    - [x] load file on startup if filename given and exists (fail on readonly)
 * [x] specifying filename on command line
 * [ ] dirty flag
     - [ ] dialogue on attempt to quit while dirty
