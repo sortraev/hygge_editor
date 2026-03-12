@@ -25,30 +25,31 @@ IOStatus ioSaveToFile(EditorState *state) {
   }
 
   FILE *f = fopen(filename, "w");
-
   if (!f) {
-    fprintf(stderr, "Failed to open %s\n", strerror(errno));
+    fprintf(stderr, "ioSaveToFile: failed to open %s\n", strerror(errno));
     if (errno == EACCES)
       return BAD_PERMISSIONS;
     return IO_ERROR;
   }
 
+  IOStatus status = SUCCESS;
   for (size_t i = 0; i < state->numLines; i++) {
     StringBuffer *line = state->lines + i;
     size_t n = line->len;
 
     if (fwrite(line->s, sizeof(char), n, f) < n 
         || fputc('\n', f) < 0) {
-      // TODO: how to handle this error?
-      return IO_ERROR;
+      fprintf(stderr, "ioSaveToFile: failure during write\n");
+      status = IO_ERROR;
+      break;
     }
   }
 
   if (fclose(f) != 0) {
-    fprintf(stderr, "Failed to close file '%s': %s, ignoring ...\n",
+    fprintf(stderr, "ioSaveToFile: failed to close file '%s': %s, ignoring ...\n",
         filename, strerror(errno));
   }
-  return SUCCESS;
+  return status;
 }
 
 #endif // IO_H
