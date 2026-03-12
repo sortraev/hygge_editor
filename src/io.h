@@ -9,7 +9,7 @@
 
 typedef enum {
   SUCCESS,
-  READONLY,
+  BAD_PERMISSIONS,
   NO_FILENAME,
   IO_ERROR,
   DIRTY
@@ -29,7 +29,7 @@ IOStatus ioSaveToFile(EditorState *state) {
   if (!f) {
     fprintf(stderr, "Failed to open %s\n", strerror(errno));
     if (errno == EACCES)
-      return READONLY;
+      return BAD_PERMISSIONS;
     return IO_ERROR;
   }
 
