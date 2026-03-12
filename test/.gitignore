@@ -1,2 +1,4 @@
-editor_state_tests
-string_buffer_tests
+*
+
+!*.c
+!Makefile
