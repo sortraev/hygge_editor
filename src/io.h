@@ -5,24 +5,17 @@
 #include <errno.h>
 
 #include "string_buffer.h"
-#include "editor_state.h"
 
 typedef enum {
   SUCCESS,
-  MISSING_FILENAME,
-  DIRTY,
   BAD_PERMISSIONS,
   IO_ERROR,
 } IOStatus;
 
-IOStatus ioSaveToFile(EditorState *state) {
+IOStatus ioSaveToFile(char *filename, StringBuffer *lines, size_t numLines) {
 
-  NOTNULL_(state);
-
-  char *filename = state->filename;
-  if (!filename) {
-    return MISSING_FILENAME;
-  }
+  NOTNULL_(filename);
+  NOTNULL_(lines);
 
   FILE *f = fopen(filename, "w");
   if (!f) {
@@ -33,11 +26,9 @@ IOStatus ioSaveToFile(EditorState *state) {
   }
 
   IOStatus status = SUCCESS;
-  for (size_t i = 0; i < state->numLines; i++) {
-    StringBuffer *line = state->lines + i;
-    size_t n = line->len;
-
-    if (fwrite(line->s, sizeof(char), n, f) < n 
+  for (size_t i = 0; i < numLines; i++) {
+    size_t n = lines[i].len;
+    if (fwrite(lines[i].s, sizeof(char), n, f) < n
         || fputc('\n', f) < 0) {
       fprintf(stderr, "ioSaveToFile: failure during write\n");
       status = IO_ERROR;

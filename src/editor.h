@@ -67,8 +67,12 @@ void _editorDeleteChar(EditorState *state) {
 void _editorDoSaveToFile(EditorState *state) {
   NOTNULL_(state);
 
-  // TODO: update message bar (after implementing such a bar)
-  switch (ioSaveToFile(state)) {
+  // TODO: update message bar accordingly (after implementing such a bar)
+
+  if (!state->filename) {
+    // TODO
+  }
+  switch (ioSaveToFile(state->filename, state->lines, state->numLines)) {
     case SUCCESS:
       break;
     default:
