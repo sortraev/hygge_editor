@@ -77,6 +77,8 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
     lines = reallocOrDie(lines, numLines * sizeof(StringBuffer));
 
     StringBuffer nextLine = { .s = s, .len = numRead, .cap = allocSize };
+    sbShrink(&nextLine);
+
     lines[numLines - 1] = nextLine;
 
     s = NULL;
