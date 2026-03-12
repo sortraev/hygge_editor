@@ -2,6 +2,7 @@
 #include "editor_state.h"
 #include "editor.h"
 #include "screen.h"
+#include "io.h"
 
 int main(int argc, char **argv) {
 
@@ -14,8 +15,18 @@ int main(int argc, char **argv) {
   state->filename = argc >= 2 ? argv[1] : NULL;
   state->running = 1;
 
+  if (argc >= 2) {
+    StringBuffer *lines = NULL;
+    size_t numLines = 0;
+    if (ioLoadFromFile(argv[1], &lines, &numLines) == SUCCESS) {
+      state->lines = lines;
+      state->lineCap = state->numLines = numLines;
+    }
+  }
+
   // TODO: placeholder. should insert better handling of empty files.
-  stateAppendEmptyLine(state);
+  if (state->numLines == 0)
+    stateAppendEmptyLine(state);
 
   while (state->running) {
     screenDrawEditorState(state);
@@ -30,3 +41,4 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+
