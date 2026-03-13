@@ -13,6 +13,7 @@ int main(void) {
     ASSERT_(state->lines == NULL);
     ASSERT_(state->numLines == 0);
     ASSERT_(state->lineCap == 0);
+    ASSERT_(!state->dirty);
 
     stateFree(state);
   }
@@ -24,6 +25,7 @@ int main(void) {
     ASSERT_(stateAppendEmptyLine(state) == 0);
     ASSERT_(state->lines != NULL);
     ASSERT_(state->numLines == 1);
+    ASSERT_(state->dirty);
 
     ASSERT_(stateAppendEmptyLine(state) == 0);
     ASSERT_(state->numLines == 2);
@@ -44,6 +46,7 @@ int main(void) {
 
     ASSERT_(stateAppendEmptyLine(state) == 0);
     ASSERT_(stateInsertString(state, 0, 0, "foo bar") == 0);
+    ASSERT_(state->dirty);
 
     ASSERT_(state->numLines == 1);
     ASSERT_(state->lines[0].len == 7);
@@ -83,8 +86,11 @@ int main(void) {
     for (int i = 0; i < numLines; i++)
       ASSERT_(stateAppendEmptyLine(state) == 0);
 
+    state->dirty = 0;
+
     // line index out of bounds
     ASSERT_(stateInsertString(state, numLines + 3, 0, "foo") == 1);
+    ASSERT_(!state->dirty);
 
     // col index out of bounds
     ASSERT_(stateInsertString(state, 2, 13, "foo") == 1);
