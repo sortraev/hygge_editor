@@ -10,6 +10,7 @@
 typedef enum {
   SUCCESS,
   BAD_PERMISSIONS,
+  FILE_NOT_EXISTS,
   IO_ERROR,
 } IOStatus;
 
@@ -56,9 +57,12 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
   if (!f) {
     fprintf(stderr, "ioLoadFromFile: failed to open '%s': %s\n",
         filename, strerror(errno));
-    if (errno == EACCES)
-      return BAD_PERMISSIONS;
-    return IO_ERROR;
+
+    switch (errno) {
+      case ENOENT: return FILE_NOT_EXISTS;
+      case EACCES: return BAD_PERMISSIONS;
+      default: return IO_ERROR;
+    }
   }
 
   size_t lineCap = 1;
