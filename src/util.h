@@ -35,17 +35,17 @@ static void _assert(int cond, const char *fmt, ...) {
 
 void *_mallocOrDie(size_t allocSize, char *file, int line) {
   void *p = malloc(allocSize);
-  _assert(p != NULL, "malloc() error: %s (%s:%d)", strerror(errno), file, line);
+  _assert(p != NULL, "malloc() error: %s (%s:%d)\n", strerror(errno), file, line);
   return p;
 }
 void *_reallocOrDie(void *p, size_t allocSize, char *file, int line) {
   p = realloc(p, allocSize);
-  _assert(p != NULL, "realloc() error: %s (%s:%d)", strerror(errno), file, line);
+  _assert(p != NULL, "realloc() error: %s (%s:%d)\n", strerror(errno), file, line);
   return p;
 }
 void *_callocOrDie(size_t n, size_t elemSize, char *file, int line) {
   void *p = calloc(n, elemSize);
-  _assert(p != NULL, "calloc() error: %s (%s:%d)", strerror(errno), file, line);
+  _assert(p != NULL, "calloc() error: %s (%s:%d)\n", strerror(errno), file, line);
   return p;
 }
 
