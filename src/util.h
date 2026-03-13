@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <errno.h>
 
+#define STATUS_BAR_HEIGHT 2
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 

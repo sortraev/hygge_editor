@@ -7,8 +7,6 @@
 #include "editor_state.h"
 #include "string_buffer.h"
 
-#define STATUS_BAR_HEIGHT 1
-
 void _renderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
