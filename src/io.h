@@ -46,6 +46,7 @@ IOStatus ioSaveToFile(char *filename, StringBuffer *lines, size_t numLines) {
 }
 
 IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLinesOut) {
+#define BUF_SIZE 8192
 
   NOTNULL_(filename);
   NOTNULL_(linesOut);
@@ -60,35 +61,58 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
     return IO_ERROR;
   }
 
-  StringBuffer *lines = NULL;
+  size_t lineCap = 1;
+  StringBuffer *lines = callocOrDie(lineCap, sizeof(StringBuffer));
   size_t numLines = 0;
 
-  char *s = NULL;
-  ssize_t numRead;
-  size_t allocSize;
-  while ((numRead = getline(&s, &allocSize, f)) >= 0) {
+  static char buf[BUF_SIZE + 1];
+  size_t numRead;
 
-    // if s contained a newline, truncate it
-    if (s[numRead - 1] == '\n') {
-      s[--numRead] = '\0';
+  // outer loop reads file in chunks; inner loop splits chunks into lines
+  do {
+    numRead = fread(buf, sizeof(char), BUF_SIZE, f);
+    buf[numRead] = '\0';
+
+    char *s = buf;
+    while (*s) {
+
+      // NOTE: the use of strchrnul implies we do not support embedded NULL bytes
+      char *nextLinebreak = strchrnul(s, '\n');
+
+      int linebreakFound = *nextLinebreak == '\n';
+
+      // break the line and append it!
+      *nextLinebreak = '\0';
+      sbAppendString(lines + numLines, s);
+
+      if (!linebreakFound) {
+        break;
+      }
+
+      s = nextLinebreak + 1;
+
+      numLines++;
+      if (numLines >= lineCap) {
+        size_t newCap = lineCap * 2;
+        lines = reallocOrDie(lines, newCap * sizeof(StringBuffer));
+        memset(lines + numLines,
+               0,
+               (newCap - lineCap) * sizeof(StringBuffer));
+        lineCap = newCap;
+      }
     }
+  } while (numRead == BUF_SIZE);
 
+  // handle non-newline-terminated line at end of input
+  if (lines[numLines].len > 0) {
     numLines++;
-    lines = reallocOrDie(lines, numLines * sizeof(StringBuffer));
-
-    StringBuffer nextLine = { .s = s, .len = numRead, .cap = allocSize };
-    sbShrink(&nextLine);
-
-    lines[numLines - 1] = nextLine;
-
-    s = NULL;
   }
-  // getline allocates even on EOF or error, hence this last `s` must be freed
-  free(s);
 
   IOStatus status = SUCCESS;
   if (feof(f)) {
-    *linesOut = lines;
+    if (numLines > 0) {
+      *linesOut = reallocOrDie(lines, numLines * sizeof(StringBuffer));
+    }
     *numLinesOut = numLines;
   }
   else {
@@ -103,6 +127,7 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
   }
 
   return status;
+#undef BUF_SIZE
 }
 
 #endif // IO_H
