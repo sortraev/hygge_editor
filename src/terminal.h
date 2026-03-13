@@ -64,7 +64,8 @@ int getWindowDims(Dims *dims) {
   struct winsize _winsize;
   if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;
-  dims->y = (size_t) _winsize.ws_row;
+
+  dims->y = (size_t) MAX(_winsize.ws_row - STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT + 1);
   dims->x = (size_t) _winsize.ws_col;
   return 0;
 }
