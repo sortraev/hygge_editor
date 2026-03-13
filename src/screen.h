@@ -11,7 +11,7 @@ void _renderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
 
-  size_t editorHeight = state->windowDims.y - STATUS_BAR_HEIGHT;
+  size_t editorHeight = state->windowDims.y;
 
   size_t i = 0;
   for (; i < MIN(editorHeight, state->numLines); i++) {
