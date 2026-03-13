@@ -12,6 +12,7 @@ Stuff I want to implement.
     - arrow keys
     - ?
 * [ ] line numbering
+* [ ] only redraw dirty lines
 
 ## Files
 
@@ -24,6 +25,7 @@ Stuff I want to implement.
     - [x] load file on startup if filename given and exists (fail on readonly)
 * [x] specifying filename on command line
 * [ ] dirty flag
+    - [x] prevent quit while dirty (but allow force quit)
     - [ ] dialogue on attempt to quit while dirty
 
 ## Misc
