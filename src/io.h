@@ -55,14 +55,15 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
 
   FILE *f = fopen(filename, "r");
   if (!f) {
+    if (errno == ENOENT)
+      return FILE_NOT_EXISTS;
+
     fprintf(stderr, "ioLoadFromFile: failed to open '%s': %s\n",
         filename, strerror(errno));
 
-    switch (errno) {
-      case ENOENT: return FILE_NOT_EXISTS;
-      case EACCES: return BAD_PERMISSIONS;
-      default: return IO_ERROR;
-    }
+    if (errno == EACCES)
+      return BAD_PERMISSIONS;
+    return IO_ERROR;
   }
 
   size_t lineCap = 1;
