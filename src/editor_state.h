@@ -11,6 +11,7 @@
 typedef struct {
   int running;
 
+
   StringBuffer *lines;
   size_t numLines;
   size_t lineCap;
@@ -19,6 +20,7 @@ typedef struct {
   Dims windowDims;
 
   char *filename;
+  int dirty;
 
   int lastKey;
 
@@ -64,6 +66,8 @@ int _stateInsertLine(EditorState *state, size_t i, StringBuffer lineBuf) {
   state->lines[i] = lineBuf;
   state->numLines++;
 
+  state->dirty = 1;
+
   return 0;
 }
 
@@ -91,7 +95,10 @@ int stateInsertString(EditorState *state, size_t line, size_t col, char *s) {
   }
 
   StringBuffer *lineBuf = state->lines + line;
-  return sbInsertString(lineBuf, col, s);
+
+  int insertStatus = sbInsertString(lineBuf, col, s);
+  state->dirty |= insertStatus == 0;
+  return insertStatus;
 }
 
 int stateInsertChar(EditorState *state, size_t line, size_t col, char c) {
@@ -102,7 +109,10 @@ int stateInsertChar(EditorState *state, size_t line, size_t col, char c) {
   }
 
   StringBuffer *lineBuf = state->lines + line;
-  return sbInsertChar(lineBuf, col, c);
+
+  int insertStatus = sbInsertChar(lineBuf, col, c);
+  state->dirty |= insertStatus == 0;
+  return insertStatus;
 }
 
 int stateDeleteChar(EditorState *state, size_t line, size_t col) {
@@ -113,7 +123,10 @@ int stateDeleteChar(EditorState *state, size_t line, size_t col) {
   }
 
   StringBuffer *lineBuf = state->lines + line;
-  return sbDeleteChar(lineBuf, col);
+
+  int deleteStatus = sbDeleteChar(lineBuf, col);
+  state->dirty |= deleteStatus == 0;
+  return deleteStatus;
 }
 
 void stateFree(EditorState *state) {

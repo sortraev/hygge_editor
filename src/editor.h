@@ -67,15 +67,17 @@ void _editorDeleteChar(EditorState *state) {
 void _editorDoSaveToFile(EditorState *state) {
   NOTNULL_(state);
 
-  // TODO: update message bar accordingly (after implementing such a bar)
-
   if (!state->filename) {
-    // TODO
+    // TODO: error + prompt user for filename somehow
   }
+
   switch (ioSaveToFile(state->filename, state->lines, state->numLines)) {
     case SUCCESS:
+      // TODO: notify success!
+      state->dirty = 0;
       break;
     default:
+      // TODO: notify error
       break;
   }
 }
@@ -94,9 +96,11 @@ void editorProcessKey(EditorState *state, char c) {
       _editorInsertNewline(state);
       break;
 
-    case '\x1b':
     case CTRL_KEY('q'):
-      state->running = 0;
+      // TODO: prompt user to save before quitting
+      if (!state->dirty)
+    case '\x1b':
+        state->running = 0;
       break;
 
     case CTRL_KEY('x'):

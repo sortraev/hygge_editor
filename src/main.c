@@ -25,8 +25,10 @@ int main(int argc, char **argv) {
   }
 
   // TODO: placeholder. should insert better handling of empty files.
-  if (state->numLines == 0)
+  if (state->numLines == 0) {
     stateAppendEmptyLine(state);
+    state->dirty = 0;
+  }
 
   while (state->running) {
     screenDrawEditorState(state);
