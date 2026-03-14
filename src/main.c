@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
   while (state->running) {
     screenDrawEditorState(state);
-    char c = editorReadKeyBlocking();
+    char c = ioReadKeyBlocking();
     editorProcessKey(state, c);
   }
 

@@ -4,6 +4,5 @@
 #include "editor_state.h"
 
 void editorProcessKey(EditorState *state, char c);
-char editorReadKeyBlocking(void);
 
 #endif // EDITOR_H

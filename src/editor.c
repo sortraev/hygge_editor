@@ -129,16 +129,4 @@ void editorProcessKey(EditorState *state, char c) {
   }
 }
 
-char editorReadKeyBlocking(void) {
-  char c;
-  int num_read;
-  while ((num_read = fread(&c, sizeof(char), 1, stdin)) != 1) {
-    // TODO: handle num_read < 0 and errno != EAGAIN
-  }
-
-  // TODO: handle escape sequences (requires adding a timeout on stdin reads)
-
-  return c;
-}
-
 #undef CTRL_KEY

@@ -13,4 +13,6 @@ typedef enum {
 IOStatus ioSaveToFile(char *filename, StringBuffer *lines, size_t numLines);
 IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLinesOut);
 
+char ioReadKeyBlocking(void);
+
 #endif // IO_H
