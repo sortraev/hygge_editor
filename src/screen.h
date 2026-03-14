@@ -70,9 +70,18 @@ void _screenRenderStatusBar(EditorState *state, StringBuffer *screenBuf) {
   sbAppendString(screenBuf, statusBarBuf);
 }
 
+#define COLOR_WARN  "\x1b[0;33m" // yellow
+#define COLOR_ERROR "\x1b[41m\x1b[1;30m" // bold black with red background
+#define COLOR_RESET "\x1b[0m"
+
+void _screenSetColor(StringBuffer *screenBuf, char *color) {
+  sbAppendString(screenBuf, color);
+}
+
 void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
+  ASSERT(state->msgType != NONE, "Error: unexpected call to _screenRenderMsgBar");
 
   _screenClearLine(screenBuf);
 
@@ -80,11 +89,26 @@ void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
   // should probably handle this dynamically, somehow ..
   state->msgBuf[state->windowDims.x] = '\0';
 
+  switch (state->msgType) {
+    case WARN:
+      _screenSetColor(screenBuf, COLOR_WARN);
+      break;
+    case ERROR:
+      _screenSetColor(screenBuf, COLOR_ERROR);
+      break;
+    default:
+      break;
+  }
+
   sbAppendString(screenBuf, state->msgBuf);
-  state->msgBufDirty = 0;
+
+  _screenSetColor(screenBuf, COLOR_RESET);
+
+  state->msgType = NONE;
 }
 
 void screenDrawEditorState(EditorState *state) {
+
   NOTNULL_(state);
 
   StringBuffer screenBuf = sbEmpty();
@@ -100,7 +124,7 @@ void screenDrawEditorState(EditorState *state) {
   _screenMoveCursorTo(statusBarY, 0, &screenBuf);
   _screenRenderStatusBar(state, &screenBuf);
 
-  if (state->msgBufDirty) {
+  if (state->msgType != NONE) {
     int msgBarY = statusBarY + 1;
     _screenMoveCursorTo(msgBarY, 0, &screenBuf);
     _screenRenderMsgBar(state, &screenBuf);

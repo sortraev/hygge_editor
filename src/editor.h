@@ -71,19 +71,19 @@ void _editorDeleteChar(EditorState *state) {
   stateDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
-void _editorSetMsgBuf(EditorState *state, char *msg) {
+void _editorSetMsgBuf(EditorState *state, MsgType msgType, char *msg) {
   NOTNULL_(state);
   NOTNULL_(msg);
 
   strncpy(state->msgBuf, msg, 256);
-  state->msgBufDirty = 1;
+  state->msgType = msgType;
 }
 void _editorClearMsgBuf(EditorState *state) {
   NOTNULL_(state);
-  _editorSetMsgBuf(state, "");
+  _editorSetMsgBuf(state, INFO, "");
 }
 
-void _editorFormatMsgBuf(EditorState *state, char *fmt, ...) {
+void _editorFormatMsgBuf(EditorState *state, MsgType msgType, char *fmt, ...) {
   NOTNULL_(state);
   NOTNULL_(fmt);
 
@@ -91,7 +91,7 @@ void _editorFormatMsgBuf(EditorState *state, char *fmt, ...) {
   va_start(args, fmt);
   vsnprintf(state->msgBuf, 256, fmt, args);
   va_end(args);
-  state->msgBufDirty = 1;
+  state->msgType = msgType;
 }
 
 void _editorDoSaveToFile(EditorState *state) {
@@ -99,20 +99,18 @@ void _editorDoSaveToFile(EditorState *state) {
 
   char *filename = state->filename;
   if (!filename) {
-    _editorFormatMsgBuf(state, "No filename given, nothing saved!");
-    return;
+    _editorSetMsgBuf(state, WARN, "No filename given, nothing saved!");
   }
-
-  switch (ioSaveToFile(filename, state->lines, state->numLines)) {
+  else switch (ioSaveToFile(filename, state->lines, state->numLines)) {
     case SUCCESS:
       state->dirty = 0;
-      _editorFormatMsgBuf(state, "\"%s\" successfully written to file", filename);
+      _editorFormatMsgBuf(state, INFO, "\"%s\" successfully written to file", filename);
       break;
     case BAD_PERMISSIONS:
-      _editorFormatMsgBuf(state, "Missing write permissions for \"%s\", nothing saved!", filename);
+      _editorFormatMsgBuf(state, WARN, "Missing write permissions for \"%s\", nothing saved!", filename);
       break;
     default:
-      _editorFormatMsgBuf(state, "Failed to write \"%s\" to file", filename);
+      _editorFormatMsgBuf(state, ERROR, "Failed to write \"%s\" to file", filename);
       break;
   }
 }
@@ -126,21 +124,16 @@ void editorProcessKey(EditorState *state, char c) {
     _editorInsertChar(state, c);
 
   else switch (c) {
-
     case '\n':
       _editorInsertNewline(state);
       break;
 
     case CTRL_KEY('q'):
-      // TODO: prompt user to save before quitting
-      if (state->dirty)
-        _editorFormatMsgBuf(state, "Save before quitting, or use ESC to force quit");
-      else
-        state->running = 0;
-      break;
-
+      if (!state->dirty)
     case '\x1b':
         state->running = 0;
+      else
+        _editorSetMsgBuf(state, WARN, "File has unsaved changes! Use ESC to force quit");
       break;
 
     case CTRL_KEY('x'):
