@@ -4,7 +4,8 @@ Stuff I want to implement.
 
 ## Editor
 
-* [ ] editor window scrolling
+* [x] editor window scrolling
+    - [ ] nice-to-have: scrolloff
 * [ ] delete before cursor (currently have only deleting *under* cursor)
 * [ ] line soft-wrapping
 * [ ] escape codes
