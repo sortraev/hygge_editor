@@ -18,6 +18,10 @@ void _screenMoveCursorTo(size_t y, size_t x, StringBuffer *screenBuf) {
   sbAppendString(screenBuf, cursorMovementBuf);
 }
 
+void _screenClearScreen(StringBuffer *screenBuf) {
+  sbAppendString(screenBuf, "\x1b[2J");
+}
+
 void _screenRenderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
@@ -25,8 +29,9 @@ void _screenRenderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   size_t editorHeight = state->windowDims.y;
 
   size_t i = 0;
-  for (; i < MIN(editorHeight, state->numLines); i++) {
-    sbAppendString(screenBuf, state->lines[i].s);
+  size_t bound = MIN(editorHeight, state->numLines - state->windowOffset);
+  for (; i < bound; i++) {
+    sbAppendString(screenBuf, state->lines[state->windowOffset + i].s);
     sbAppendChar(screenBuf, '\n');
   }
   for (; i < editorHeight; i++)
@@ -48,11 +53,17 @@ void _screenRenderStatusBar(EditorState *state, StringBuffer *screenBuf) {
       state->filename ? state->filename : "[No filename]",
       state->cursor.y + 1,
       state->cursor.x + 1);
-  snprintf(
+  n += snprintf(
       statusBarBuf + n,
       sizeof(statusBarBuf) - n,
       isprint(state->lastKey) ? "'%c'" : "%d",
       state->lastKey);
+
+  snprintf(
+      statusBarBuf + n,
+      sizeof(statusBarBuf) - n,
+      " | windowOffset = %ld",
+      state->windowOffset);
   sbAppendString(screenBuf, statusBarBuf);
 }
 
@@ -62,14 +73,16 @@ void screenDrawEditorState(EditorState *state) {
   StringBuffer screenBuf = sbEmpty();
   sbInitWithCapacity(&screenBuf, 4096);
 
-  sbAppendString(&screenBuf, "\x1b[2J\x1b[H"); // move cursor to top position
+  _screenClearScreen(&screenBuf);
 
+  _screenMoveCursorTo(0, 0, &screenBuf);
   _screenRenderEditorWindow(state, &screenBuf);
 
   _screenMoveCursorTo(state->windowDims.y, 0, &screenBuf);
   _screenRenderStatusBar(state, &screenBuf);
 
-  _screenMoveCursorTo(state->cursor.y, state->cursor.x, &screenBuf);
+  // reset term cursor to editor cursor position
+  _screenMoveCursorTo(state->cursor.y - state->windowOffset, state->cursor.x, &screenBuf);
 
   fwrite(screenBuf.s, sizeof(char), screenBuf.len, stdout);
   sbFree(&screenBuf);
