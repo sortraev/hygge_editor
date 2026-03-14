@@ -5,7 +5,7 @@
 
 #include "util.h"
 #include "dims.h"
-#include "terminal.h"
+#include "term.h"
 #include "string_buffer.h"
 
 typedef enum {

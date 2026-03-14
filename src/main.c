@@ -1,4 +1,4 @@
-#include "terminal.h"
+#include "term.h"
 #include "editor_state.h"
 #include "editor.h"
 #include "screen.h"
