@@ -22,6 +22,10 @@ void _screenClearScreen(StringBuffer *screenBuf) {
   sbAppendString(screenBuf, "\x1b[2J");
 }
 
+void _screenClearLine(StringBuffer *screenBuf) {
+  sbAppendString(screenBuf, "\x1b[K");
+}
+
 void _screenRenderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
@@ -42,8 +46,7 @@ void _screenRenderStatusBar(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
 
-  // clear status bar line
-  sbAppendString(screenBuf, "\x1b[K");
+  _screenClearLine(screenBuf);
 
   char statusBarBuf[256];
   int n = snprintf(
@@ -67,6 +70,20 @@ void _screenRenderStatusBar(EditorState *state, StringBuffer *screenBuf) {
   sbAppendString(screenBuf, statusBarBuf);
 }
 
+void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
+  NOTNULL_(state);
+  NOTNULL_(screenBuf);
+
+  _screenClearLine(screenBuf);
+
+  // TODO: this assumes windowDims.x is always smaller than the msg buffer.
+  // should probably handle this dynamically, somehow ..
+  state->msgBuf[state->windowDims.x] = '\0';
+
+  sbAppendString(screenBuf, state->msgBuf);
+  state->msgBufDirty = 0;
+}
+
 void screenDrawEditorState(EditorState *state) {
   NOTNULL_(state);
 
@@ -78,8 +95,16 @@ void screenDrawEditorState(EditorState *state) {
   _screenMoveCursorTo(0, 0, &screenBuf);
   _screenRenderEditorWindow(state, &screenBuf);
 
-  _screenMoveCursorTo(state->windowDims.y, 0, &screenBuf);
+  int statusBarY = state->windowDims.y;
+
+  _screenMoveCursorTo(statusBarY, 0, &screenBuf);
   _screenRenderStatusBar(state, &screenBuf);
+
+  if (state->msgBufDirty) {
+    int msgBarY = statusBarY + 1;
+    _screenMoveCursorTo(msgBarY, 0, &screenBuf);
+    _screenRenderMsgBar(state, &screenBuf);
+  }
 
   // reset term cursor to editor cursor position
   _screenMoveCursorTo(state->cursor.y - state->windowOffset, state->cursor.x, &screenBuf);

@@ -71,20 +71,48 @@ void _editorDeleteChar(EditorState *state) {
   stateDeleteChar(state, state->cursor.y, state->cursor.x);
 }
 
+void _editorSetMsgBuf(EditorState *state, char *msg) {
+  NOTNULL_(state);
+  NOTNULL_(msg);
+
+  strncpy(state->msgBuf, msg, 256);
+  state->msgBufDirty = 1;
+}
+void _editorClearMsgBuf(EditorState *state) {
+  NOTNULL_(state);
+  _editorSetMsgBuf(state, "");
+}
+
+void _editorFormatMsgBuf(EditorState *state, char *fmt, ...) {
+  NOTNULL_(state);
+  NOTNULL_(fmt);
+
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(state->msgBuf, 256, fmt, args);
+  va_end(args);
+  state->msgBufDirty = 1;
+}
+
 void _editorDoSaveToFile(EditorState *state) {
   NOTNULL_(state);
 
-  if (!state->filename) {
-    // TODO: error + prompt user for filename somehow
+  char *filename = state->filename;
+  if (!filename) {
+    _editorFormatMsgBuf(state, "No filename given, nothing saved!");
+    return;
   }
 
-  switch (ioSaveToFile(state->filename, state->lines, state->numLines)) {
+  switch (ioSaveToFile(filename, state->lines, state->numLines)) {
     case SUCCESS:
-      // TODO: notify success!
       state->dirty = 0;
+      _editorFormatMsgBuf(state, "\"%s\" successfully written to file", filename);
+      break;
+    case BAD_PERMISSIONS:
+      _editorFormatMsgBuf(state, "Missing write permissions for \"%s\", nothing saved!", filename);
       break;
     default:
-      // TODO: notify error
+      _editorFormatMsgBuf(state, "Failed to write \"%s\" to file", filename);
       break;
   }
 }
@@ -105,7 +133,12 @@ void editorProcessKey(EditorState *state, char c) {
 
     case CTRL_KEY('q'):
       // TODO: prompt user to save before quitting
-      if (!state->dirty)
+      if (state->dirty)
+        _editorFormatMsgBuf(state, "Save before quitting, or use ESC to force quit");
+      else
+        state->running = 0;
+      break;
+
     case '\x1b':
         state->running = 0;
       break;
