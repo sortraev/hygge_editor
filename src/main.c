@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
 
-  if (initTerminal() != 0) {
+  if (termInit() != 0) {
     fprintf(stderr, "Failed to init terminal raw mode, exiting\n");
     return 1;
   }
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     editorProcessKey(state, c);
   }
 
-  resetTerminalMode();
+  termDeinit();
 
   stateFree(state);
   free(state);

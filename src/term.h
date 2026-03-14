@@ -17,7 +17,7 @@
 static int ORIG_TERMIOS_set = 0;
 static struct termios ORIG_TERMIOS;
 
-void resetTerminalMode(void) {
+void termDeinit(void) {
   if (ORIG_TERMIOS_set)
     tcsetattr(fileno(stdin), TCSAFLUSH, &ORIG_TERMIOS); // restore term attributes.
   printf("\x1b[?1049l"); // switch back from alternate screen.
@@ -30,7 +30,7 @@ int _setTerminalRawMode(void) {
   }
   ORIG_TERMIOS_set = 1;
 
-  if (atexit(resetTerminalMode) != 0) {
+  if (atexit(termDeinit) != 0) {
     fprintf(stderr, "Failed to set terminal mode exit handler: %s\n", strerror(errno));
     return 1;
   }
@@ -44,7 +44,7 @@ int _setTerminalRawMode(void) {
   return tcsetattr(fileno(stdin), TCSAFLUSH, &raw);
 }
 
-int initTerminal(void) {
+int termInit(void) {
 
   if (_setTerminalRawMode() != 0) {
     fprintf(stderr, "Failed to set raw mode: %s\n", strerror(errno));
@@ -58,7 +58,7 @@ int initTerminal(void) {
   return 0;
 }
 
-int getWindowDims(Dims *dims) {
+int termGetWindowDims(Dims *dims) {
   NOTNULL_(dims);
 
   struct winsize _winsize;

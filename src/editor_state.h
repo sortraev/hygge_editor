@@ -180,7 +180,7 @@ void stateFree(EditorState *state) {
 EditorState *stateInit(void) {
   EditorState *state = callocOrDie(1, sizeof(EditorState));
 
-  getWindowDims(&state->windowDims);
+  termGetWindowDims(&state->windowDims);
 
   state->lastKey = -1;
 
