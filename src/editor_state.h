@@ -37,20 +37,6 @@ typedef struct {
 
 } EditorState;
 
-int _stateSetMsg(EditorState *state, char *msg) {
-  NOTNULL_(state);
-  NOTNULL_(msg);
-
-  strncpy(state->msgBuf, msg, 256);
-  state->msgType = INFO;
-  return 0;
-}
-
-int _stateClearMsg(EditorState *state) {
-  NOTNULL_(state);
-  return _stateSetMsg(state, "");
-}
-
 int _stateResizeLines(EditorState *state, size_t newCap) {
   NOTNULL_(state);
   ASSERT(newCap >= state->lineCap, "stateResizeLines(): downsizing not yet supported");
@@ -152,6 +138,34 @@ int stateDeleteChar(EditorState *state, size_t line, size_t col) {
   int deleteStatus = sbDeleteChar(lineBuf, col);
   state->dirty |= deleteStatus == 0;
   return deleteStatus;
+}
+
+int stateSetMsg(EditorState *state, MsgType msgType, char *msg) {
+  NOTNULL_(state);
+  NOTNULL_(msg);
+
+  strncpy(state->msgBuf, msg, 256);
+  state->msgType = msgType;
+  return 0;
+}
+
+int stateClearMsg(EditorState *state) {
+  NOTNULL_(state);
+  return stateSetMsg(state, INFO, "");
+}
+
+int stateFormatMsg(EditorState *state, MsgType msgType, char *fmt, ...) {
+  NOTNULL_(state);
+  NOTNULL_(fmt);
+
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(state->msgBuf, 256, fmt, args);
+  va_end(args);
+
+  state->msgType = msgType;
+
+  return 0;
 }
 
 void stateFree(EditorState *state) {
