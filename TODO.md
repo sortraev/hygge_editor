@@ -36,5 +36,5 @@ Stuff I want to implement.
     - as of now, upon inserting a new line, all subsequent lines are shifted
         "down" by one (in the array of `StringBuffer`s, that is)
 * [ ] vim-like modes?
-* [ ] "message" bar, in addition to status bar (can double as command line
+* [x] "message" bar, in addition to status bar (can double as command line
     if vim-like normal mode is implemented)
