@@ -7,7 +7,7 @@
 #include "editor_state.h"
 #include "string_buffer.h"
 
-void _moveCursorTo(size_t y, size_t x, StringBuffer *screenBuf) {
+void _screenMoveCursorTo(size_t y, size_t x, StringBuffer *screenBuf) {
   char cursorMovementBuf[12];
   snprintf(
       cursorMovementBuf,
@@ -18,7 +18,7 @@ void _moveCursorTo(size_t y, size_t x, StringBuffer *screenBuf) {
   sbAppendString(screenBuf, cursorMovementBuf);
 }
 
-void _renderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
+void _screenRenderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
 
@@ -33,7 +33,7 @@ void _renderEditorWindow(EditorState *state, StringBuffer *screenBuf) {
     sbAppendString(screenBuf, "~\n");
 }
 
-void _renderStatusBar(EditorState *state, StringBuffer *screenBuf) {
+void _screenRenderStatusBar(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
 
@@ -64,12 +64,12 @@ void screenDrawEditorState(EditorState *state) {
 
   sbAppendString(&screenBuf, "\x1b[2J\x1b[H"); // move cursor to top position
 
-  _renderEditorWindow(state, &screenBuf);
+  _screenRenderEditorWindow(state, &screenBuf);
 
-  _moveCursorTo(state->windowDims.y, 0, &screenBuf);
-  _renderStatusBar(state, &screenBuf);
+  _screenMoveCursorTo(state->windowDims.y, 0, &screenBuf);
+  _screenRenderStatusBar(state, &screenBuf);
 
-  _moveCursorTo(state->cursor.y, state->cursor.x, &screenBuf);
+  _screenMoveCursorTo(state->cursor.y, state->cursor.x, &screenBuf);
 
   fwrite(screenBuf.s, sizeof(char), screenBuf.len, stdout);
   sbFree(&screenBuf);
