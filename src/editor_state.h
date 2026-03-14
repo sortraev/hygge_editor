@@ -8,6 +8,13 @@
 #include "terminal.h"
 #include "string_buffer.h"
 
+typedef enum {
+  NONE,
+  INFO,
+  WARN,
+  ERROR
+} MsgType;
+
 typedef struct {
   int running;
 
@@ -25,7 +32,7 @@ typedef struct {
 
   int lastKey;
 
-  int msgBufDirty;
+  MsgType msgType;
   char msgBuf[256]; // TODO: dynamic..?
 
 } EditorState;
@@ -35,7 +42,7 @@ int _stateSetMsg(EditorState *state, char *msg) {
   NOTNULL_(msg);
 
   strncpy(state->msgBuf, msg, 256);
-  state->msgBufDirty = 1;
+  state->msgType = INFO;
   return 0;
 }
 
