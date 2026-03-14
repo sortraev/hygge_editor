@@ -33,11 +33,18 @@ void _editorProcessCursorMovementKey(EditorState *state, int c) {
       state->cursor.x++;
       break;
   }
+  // fix cursor X
   size_t currentLineLen =
     state->cursor.y < state->numLines
       ? state->lines[state->cursor.y].len
       : 0;
   state->cursor.x = MIN(state->cursor.x, currentLineLen);
+
+  // fix windowOffset
+  if (state->cursor.y > state->windowOffset + state->windowDims.y - 1)
+    state->windowOffset++;
+  if (state->cursor.y < state->windowOffset)
+    state->windowOffset--;
 }
 
 void _editorInsertNewline(EditorState *state) {

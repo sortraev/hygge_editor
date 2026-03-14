@@ -11,13 +11,14 @@
 typedef struct {
   int running;
 
-
   StringBuffer *lines;
   size_t numLines;
   size_t lineCap;
 
   Dims cursor;
   Dims windowDims;
+
+  size_t windowOffset;
 
   char *filename;
   int dirty;
