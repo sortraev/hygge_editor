@@ -1,5 +1,4 @@
-my_editor
-main
-a.out
-valgrind.log
-vgcore*
+src/my_editor
+src/valgrind.log
+src/vgcore*
+src/*.o
