@@ -1,20 +1,21 @@
-main=my_editor
+bin=my_editor
 
-.PHONY: $(main) clean
+compile: $(bin)
 
-run: $(main)
-	./$<
+SRCS = ${wildcard *.c}
+OBJS = ${SRCS:.c=.o}
 
-compile: $(main)
+%.o: %.c
+	gcc -c $^
 
-$(main): main.c
-	gcc -DDEBUG -Wall -Wextra -pedantic $< -ggdb -o $@
+$(bin): $(OBJS)
+	gcc -o $@ $^
 
-vg: $(main)
-	valgrind --log-file=valgrind.log --leak-check=full ./$(main)
+vg: $(bin)
+	valgrind --log-file=valgrind.log --leak-check=full ./$(bin)
 
-debug: $(main)
-	sudo gdb -p $(shell pgrep $(main))
+debug: $(bin)
+	sudo gdb -p $(shell pgrep $(bin))
 
 clean:
-	rm -f $(main) vgcore* valgrind.log
+	rm -f $(bin) *.o vgcore* valgrind.log
