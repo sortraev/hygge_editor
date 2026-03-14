@@ -19,6 +19,7 @@ Stuff I want to implement.
 
 * [ ] saving files
     - [x] IO functionality
+    - [x] editor shortcut (for now, ctrl+f)
     - [ ] user response on file saved
     - [ ] save dialogue when filename not already specified
 * [x] opening files
