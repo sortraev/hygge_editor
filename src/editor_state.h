@@ -25,7 +25,24 @@ typedef struct {
 
   int lastKey;
 
+  int msgBufDirty;
+  char msgBuf[256]; // TODO: dynamic..?
+
 } EditorState;
+
+int _stateSetMsg(EditorState *state, char *msg) {
+  NOTNULL_(state);
+  NOTNULL_(msg);
+
+  strncpy(state->msgBuf, msg, 256);
+  state->msgBufDirty = 1;
+  return 0;
+}
+
+int _stateClearMsg(EditorState *state) {
+  NOTNULL_(state);
+  return _stateSetMsg(state, "");
+}
 
 int _stateResizeLines(EditorState *state, size_t newCap) {
   NOTNULL_(state);
