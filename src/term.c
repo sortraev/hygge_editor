@@ -16,8 +16,6 @@
 #include "dims.h"
 #include "util.h"
 
-#define STATUS_BAR_HEIGHT 2
-
 static int ORIG_TERMIOS_set = 0;
 static struct termios ORIG_TERMIOS;
 
@@ -69,7 +67,7 @@ int termGetWindowDims(Dims *dims) {
   if (ioctl(fileno(stdout), TIOCGWINSZ, &_winsize) == -1)
     return 1;
 
-  dims->y = (size_t) MAX(_winsize.ws_row - STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT + 1);
+  dims->y = (size_t) _winsize.ws_row;
   dims->x = (size_t) _winsize.ws_col;
   return 0;
 }
