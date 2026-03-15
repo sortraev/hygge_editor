@@ -1,4 +1,0 @@
-src/my_editor
-src/valgrind.log
-src/vgcore*
-src/*.o
