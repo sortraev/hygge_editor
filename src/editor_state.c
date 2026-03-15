@@ -67,13 +67,15 @@ void stateFree(EditorState *state) {
 EditorState *stateInit(void) {
   EditorState *state = callocOrDie(1, sizeof(EditorState));
 
-  ASSERT(termGetWindowDims(&state->windowDims) == 0,
-      "Failed to get terminal window dimensions");
+  if (termGetWindowDims(&state->windowDims) != 0) {
+    free(state);
+    return NULL;
+  }
 
 #define STATUS_BAR_HEIGHT 2 // TODO: find out where to best define this one ..
 
   state->windowDims.y =
-      MAX(state->windowDims.y - STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT + 1);
+      MAX((ssize_t) state->windowDims.y - STATUS_BAR_HEIGHT, STATUS_BAR_HEIGHT + 1);
 
   state->lastKey = -1;
 
