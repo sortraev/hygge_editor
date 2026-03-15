@@ -6,12 +6,15 @@ SRCS = ${wildcard *.c}
 OBJS = ${SRCS:.c=.o}
 
 CCFLAGS=-ggdb -Wall -Wextra -pedantic
+CCFLAGS+=-DDEBUG
+
+.PHONY: main.h
 
 %.o: %.c %.h
-	gcc $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c $<
 
 $(bin): $(OBJS)
-	gcc -o $@ $^
+	$(CC) -o $@ $^
 
 vg: $(bin)
 	valgrind --log-file=valgrind.log --leak-check=full ./$(bin)
