@@ -93,7 +93,7 @@ void _editorDoSaveToFile(EditorState *state) {
 
 void _editorShowHelpMsg(EditorState *state) {
   NOTNULL_(state);
-  char *helpMsg = "C-{wasd}: movement | C-x: delete | C-f: save | C-q: quit | ESC: force quit";
+  char *helpMsg = "C-{wasd}: movement | C-x: delete under cursor | C-f: save | C-q: quit | ESC: force quit";
   stateSetMsg(state, INFO, helpMsg);
 }
 
