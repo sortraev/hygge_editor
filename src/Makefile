@@ -1,4 +1,4 @@
-bin=my_editor
+bin=hyg
 
 compile: $(bin)
 
