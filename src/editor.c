@@ -91,6 +91,12 @@ void _editorDoSaveToFile(EditorState *state) {
   }
 }
 
+void _editorShowHelpMsg(EditorState *state) {
+  NOTNULL_(state);
+  char *helpMsg = "HELP: C-{wasd}: movement | C-x: delete | C-f: save | C-q: quit | ESC: force quit";
+  stateSetMsg(state, INFO, helpMsg);
+}
+
 void editorProcessKey(EditorState *state, char c) {
   NOTNULL_(state);
 
@@ -125,6 +131,10 @@ void editorProcessKey(EditorState *state, char c) {
 
     case CTRL_KEY('f'):
       _editorDoSaveToFile(state);
+      break;
+
+    case CTRL_KEY('h'):
+      _editorShowHelpMsg(state);
       break;
   }
 }
