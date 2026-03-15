@@ -64,7 +64,7 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
 
   size_t lineCap = 1;
   StringBuffer *lines = callocOrDie(lineCap, sizeof(StringBuffer));
-  size_t numLines = 0;
+  size_t i = 0;
 
   static char buf[READ_SIZE + 1];
   size_t numRead;
@@ -77,26 +77,26 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
     char *s = buf;
     while (*s) {
 
-      // NOTE: the use of strchrnul implies we do not support embedded NULL bytes
-      char *nextLinebreak = strchrnul(s, '\n');
+      // NOTE: the use of strchr implies we do not support embedded NULL bytes
+      char *nextLinebreak = strchr(s, '\n');
 
-      int linebreakFound = *nextLinebreak == '\n';
+      int linebreakFound = nextLinebreak != NULL;
+      if (linebreakFound)
+        // if we found a linebreak, break string here before appending
+        *nextLinebreak = '\0';
 
-      // break the line and append it!
-      *nextLinebreak = '\0';
-      sbAppendString(lines + numLines, s);
+      sbAppendString(lines + i, s);
 
-      if (!linebreakFound) {
+      if (!linebreakFound)
         break;
-      }
 
       s = nextLinebreak + 1;
 
-      numLines++;
-      if (numLines >= lineCap) {
+      i++;
+      if (i >= lineCap) {
         size_t newCap = lineCap * 2;
         lines = reallocOrDie(lines, newCap * sizeof(StringBuffer));
-        memset(lines + numLines,
+        memset(lines + i,
                0,
                (newCap - lineCap) * sizeof(StringBuffer));
         lineCap = newCap;
@@ -104,11 +104,12 @@ IOStatus ioLoadFromFile(char *filename, StringBuffer **linesOut, size_t *numLine
     }
   } while (numRead == READ_SIZE);
 
-  // handle non-newline-terminated line at end of input
-  if (lines[numLines].len > 0) {
-    numLines++;
+  // handle non-newline-terminated line at end of input.
+  if (lines[i].len > 0) {
+    i++;
   }
 
+  size_t numLines = i;
   IOStatus status = SUCCESS;
   if (feof(f)) {
     if (numLines > 0) {
