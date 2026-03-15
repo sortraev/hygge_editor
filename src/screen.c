@@ -82,7 +82,7 @@ void _screenSetColor(StringBuffer *screenBuf, char *color) {
 void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
   NOTNULL_(state);
   NOTNULL_(screenBuf);
-  ASSERT(state->msgType != NONE, "Error: unexpected call to _screenRenderMsgBar");
+  ASSERT(state->lastMsgLevel != NONE, "Error: unexpected call to _screenRenderMsgBar");
 
   _screenClearLine(screenBuf);
 
@@ -90,7 +90,7 @@ void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
   // should probably handle this dynamically, somehow ..
   state->msgBuf[state->windowDims.x] = '\0';
 
-  switch (state->msgType) {
+  switch (state->lastMsgLevel) {
     case WARN:
       _screenSetColor(screenBuf, COLOR_WARN);
       break;
@@ -105,7 +105,7 @@ void _screenRenderMsgBar(EditorState *state, StringBuffer *screenBuf) {
 
   _screenSetColor(screenBuf, COLOR_RESET);
 
-  state->msgType = NONE;
+  state->lastMsgLevel = NONE;
 }
 
 void screenDrawEditorState(EditorState *state) {
@@ -125,7 +125,7 @@ void screenDrawEditorState(EditorState *state) {
   _screenMoveCursorTo(statusBarY, 0, &screenBuf);
   _screenRenderStatusBar(state, &screenBuf);
 
-  if (state->msgType != NONE) {
+  if (state->lastMsgLevel != NONE) {
     int msgBarY = statusBarY + 1;
     _screenMoveCursorTo(msgBarY, 0, &screenBuf);
     _screenRenderMsgBar(state, &screenBuf);

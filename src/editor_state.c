@@ -140,16 +140,16 @@ int stateDeleteChar(EditorState *state, size_t line, size_t col) {
   return deleteStatus;
 }
 
-int stateSetMsg(EditorState *state, MsgType msgType, char *msg) {
+int stateSetMsg(EditorState *state, MsgLevel msgLevel, char *msg) {
   NOTNULL_(state);
   NOTNULL_(msg);
 
   strncpy(state->msgBuf, msg, 256);
-  state->msgType = msgType;
+  state->lastMsgLevel = msgLevel;
   return 0;
 }
 
-int stateFormatMsg(EditorState *state, MsgType msgType, char *fmt, ...) {
+int stateFormatMsg(EditorState *state, MsgLevel msgLevel, char *fmt, ...) {
   NOTNULL_(state);
   NOTNULL_(fmt);
 
@@ -158,7 +158,7 @@ int stateFormatMsg(EditorState *state, MsgType msgType, char *fmt, ...) {
   vsnprintf(state->msgBuf, 256, fmt, args);
   va_end(args);
 
-  state->msgType = msgType;
+  state->lastMsgLevel = msgLevel;
 
   return 0;
 }

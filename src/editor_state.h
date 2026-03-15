@@ -9,7 +9,7 @@ typedef enum {
   INFO,
   WARN,
   ERROR
-} MsgType;
+} MsgLevel;
 
 typedef struct {
   int running;
@@ -28,7 +28,7 @@ typedef struct {
 
   int lastKey;
 
-  MsgType msgType;
+  MsgLevel lastMsgLevel;
   char msgBuf[256]; // TODO: dynamic..?
 
 } EditorState;
@@ -43,8 +43,8 @@ int stateInsertString(EditorState *state, size_t line, size_t col, char *s);
 int stateInsertChar(EditorState *state, size_t line, size_t col, char c);
 int stateDeleteChar(EditorState *state, size_t line, size_t col);
 
-int stateSetMsg(EditorState *state, MsgType msgType, char *msg);
-int stateFormatMsg(EditorState *state, MsgType msgType, char *fmt, ...);
+int stateSetMsg(EditorState *state, MsgLevel msgLevel, char *msg);
+int stateFormatMsg(EditorState *state, MsgLevel msgLevel, char *fmt, ...);
 int stateClearMsg(EditorState *state);
 
 #endif // EDITOR_STATE_H
