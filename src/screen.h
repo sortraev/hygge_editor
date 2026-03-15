@@ -4,7 +4,7 @@
 #include "editor_state.h"
 
 #define COLOR_WARN  "\x1b[0;33m" // yellow
-#define COLOR_ERROR "\x1b[41m\x1b[1;30m" // bold black with red background
+#define COLOR_ERROR "\x1b[1;37m\x1b[41m" // bold white with red background
 
 void screenDrawEditorState(EditorState *state);
 
