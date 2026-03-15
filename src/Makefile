@@ -5,8 +5,10 @@ compile: $(bin)
 SRCS = ${wildcard *.c}
 OBJS = ${SRCS:.c=.o}
 
-%.o: %.c
-	gcc -c $^
+CCFLAGS=-ggdb -Wall -Wextra -pedantic
+
+%.o: %.c %.h
+	gcc $(CCFLAGS) -c $<
 
 $(bin): $(OBJS)
 	gcc -o $@ $^
@@ -18,4 +20,4 @@ debug: $(bin)
 	sudo gdb -p $(shell pgrep $(bin))
 
 clean:
-	rm -f $(bin) *.o vgcore* valgrind.log
+	rm -f $(bin) *.o *.gch vgcore* valgrind.log
